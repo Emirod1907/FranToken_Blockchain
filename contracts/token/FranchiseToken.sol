@@ -11,6 +11,7 @@ import {SafeCast} from "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import {IERC3643} from "../interfaces/IERC3643.sol";
 import {IIdentityRegistry} from "../interfaces/IIdentityRegistry.sol";
 import {ICompliance} from "../interfaces/ICompliance.sol";
+import {IPaymentObligation} from "../interfaces/IPaymentObligation.sol";
 import {AgentRole} from "../roles/AgentRole.sol";
 
 /**
@@ -23,6 +24,8 @@ import {AgentRole} from "../roles/AgentRole.sol";
  *           wallets perdidas (requisitos regulatorios de ERC-3643).
  *         - Los ingresos/regalías de la franquicia se reparten a prorrata entre los holders
  *           en un token de pago (p. ej. USDC) mediante un modelo "pull" (cada holder reclama).
+ *         - Los pagos senior (regalías al franquiciante, honorarios de la operadora, ...) van
+ *           antes que los inversores: no se reparte mientras alguno esté vencido.
  */
 contract FranchiseToken is IERC3643, ERC20, Pausable, ReentrancyGuard, AgentRole {
     using SafeERC20 for IERC20;
@@ -40,6 +43,7 @@ contract FranchiseToken is IERC3643, ERC20, Pausable, ReentrancyGuard, AgentRole
 
     string private constant TOKEN_VERSION = "4.1.3-franchise.1";
     uint256 private constant MAGNITUDE = 2 ** 128;
+    uint256 private constant MAX_SENIOR_OBLIGATIONS = 10;
 
     string private _tokenName;
     string private _tokenSymbol;
@@ -65,10 +69,13 @@ contract FranchiseToken is IERC3643, ERC20, Pausable, ReentrancyGuard, AgentRole
     uint256 private _magnifiedRevenuePerShare;
     mapping(address => int256) private _magnifiedRevenueCorrections;
     mapping(address => uint256) private _withdrawnRevenue;
+    IPaymentObligation[] private _seniorObligations;
 
     event FranchiseInfoUpdated(string franchiseName, string brand, string location, uint256 valuation);
     event RevenueDistributed(address indexed distributor, uint256 amount, string memo);
     event RevenueClaimed(address indexed holder, uint256 amount);
+    event SeniorObligationAdded(address indexed obligation);
+    event SeniorObligationRemoved(address indexed obligation);
 
     error AddressIsFrozen(address account);
     error InsufficientFreeBalance(address account, uint256 requested, uint256 available);
@@ -83,6 +90,10 @@ contract FranchiseToken is IERC3643, ERC20, Pausable, ReentrancyGuard, AgentRole
     error NoHolders();
     error ZeroAmount();
     error NothingToClaim();
+    error SeniorPaymentsOverdue(address obligation);
+    error TooManyObligations();
+    error ObligationAlreadyAdded(address obligation);
+    error ObligationNotFound(address obligation);
 
     constructor(
         string memory name_,
@@ -189,6 +200,35 @@ contract FranchiseToken is IERC3643, ERC20, Pausable, ReentrancyGuard, AgentRole
     function setFranchiseInfo(FranchiseInfo calldata info) external onlyOwner {
         _franchiseInfo = info;
         emit FranchiseInfoUpdated(info.franchiseName, info.brand, info.location, info.valuation);
+    }
+
+    /// @notice Registra un contrato cuyos pagos deben estar al día antes de repartir ingresos
+    ///         (p. ej. FranchiseAgreement u OperatingAgreement).
+    function addSeniorObligation(address obligation) external onlyOwner {
+        if (obligation == address(0)) revert ZeroAddress();
+        if (_seniorObligations.length >= MAX_SENIOR_OBLIGATIONS) revert TooManyObligations();
+        for (uint256 i = 0; i < _seniorObligations.length; i++) {
+            if (address(_seniorObligations[i]) == obligation) revert ObligationAlreadyAdded(obligation);
+        }
+        _seniorObligations.push(IPaymentObligation(obligation));
+        emit SeniorObligationAdded(obligation);
+    }
+
+    function removeSeniorObligation(address obligation) external onlyOwner {
+        uint256 n = _seniorObligations.length;
+        for (uint256 i = 0; i < n; i++) {
+            if (address(_seniorObligations[i]) == obligation) {
+                _seniorObligations[i] = _seniorObligations[n - 1];
+                _seniorObligations.pop();
+                emit SeniorObligationRemoved(obligation);
+                return;
+            }
+        }
+        revert ObligationNotFound(obligation);
+    }
+
+    function seniorObligations() external view returns (IPaymentObligation[] memory) {
+        return _seniorObligations;
     }
 
     // =====================================================================
@@ -386,11 +426,17 @@ contract FranchiseToken is IERC3643, ERC20, Pausable, ReentrancyGuard, AgentRole
     /**
      * @notice Deposita ingresos de la franquicia para repartir a prorrata entre los holders.
      * @dev El agente debe haber hecho `approve` del token de pago a este contrato.
+     *      Revierte si alguna obligación senior tiene pagos vencidos.
      */
     function distributeRevenue(uint256 amount, string calldata memo) external onlyAgent nonReentrant {
         if (amount == 0) revert ZeroAmount();
         uint256 supply = totalSupply();
         if (supply == 0) revert NoHolders();
+        for (uint256 i = 0; i < _seniorObligations.length; i++) {
+            if (_seniorObligations[i].hasOverduePayments()) {
+                revert SeniorPaymentsOverdue(address(_seniorObligations[i]));
+            }
+        }
 
         paymentToken.safeTransferFrom(msg.sender, address(this), amount);
         _magnifiedRevenuePerShare += (amount * MAGNITUDE) / supply;

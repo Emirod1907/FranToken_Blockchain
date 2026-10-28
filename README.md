@@ -1,20 +1,35 @@
 # FranToken — Tokenización de franquicias (ERC-3643)
 
-Versión 1.0 · 2026-10-04 · Idioma de trabajo: español.
+Security token permisionado basado en ERC-3643 (T-REX) que representa participaciones en una franquicia, con reparto de regalías en stablecoin, y los contratos que vinculan al fideicomiso con el franquiciante y con la operadora.
 
-Security token permisionado basado en ERC-3643 (T-REX) que representa participaciones en una franquicia, con reparto de regalías en stablecoin.
+## Modelo
 
-Conserva contexto, decisiones pendientes y evidencia de verificación; no configura un runtime autónomo. El código existente es un prototipo y sus supuestos económicos y técnicos no están aprobados por el manual.
+1. Se analiza la viabilidad de la franquicia y se crea un fideicomiso.
+2. El fideicomiso vende los tokens y con lo recaudado compra la franquicia.
+3. FranToken SAS cobra comisión por la gestión y por la ganancia generada.
+4. Un administrador profesional (operadora) gestiona el local.
+
+| # | Partes | Contrato | Estado |
+|---|---|---|---|
+| 1 | Franquiciante ↔ Fideicomiso | `agreements/FranchiseAgreement.sol` | Implementado |
+| 2 | Fideicomiso ↔ Operadora | `agreements/OperatingAgreement.sol` | Implementado |
+| 3 | Fideicomiso ↔ FranToken SAS | Contrato de servicios y honorarios | Pendiente (Martín) |
+| 4 | Fideicomiso / emisor ↔ Inversor | Documentación de inversión (usa `FranchiseToken`) | Pendiente (Martín) |
+
+Los contratos 3 y 4 pueden reutilizar `BilateralAgreement` (firmas, vigencia, cláusulas, incumplimientos y terminación). Si generan pagos senior a los inversores, implementan `IPaymentObligation` y se registran en el token con `addSeniorObligation`.
 
 ## Contratos
 
-| Contrato                             | Función                                                                                                                                                                    |
-| ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `token/FranchiseToken.sol`           | Token ERC-3643: emisión, quema, congelamiento, transferencias forzadas, recuperación de wallets, pausa, operaciones en lote, datos de la franquicia y reparto de ingresos. |
-| `registry/IdentityRegistry.sol`      | Inversores verificados (wallet → ONCHAINID + país + vencimiento de KYC).                                                                                                   |
-| `compliance/FranchiseCompliance.sol` | Reglas: máximo de inversores, tenencia máxima, países bloqueados, lock-up.                                                                                                 |
-| `roles/AgentRole.sol`                | Owner + agentes autorizados.                                                                                                                                               |
-| `mocks/MockStablecoin.sol`           | USDC de prueba (sólo local/tests).                                                                                                                                         |
+| Contrato | Función |
+|---|---|
+| `token/FranchiseToken.sol` | Token ERC-3643: emisión, quema, congelamiento, transferencias forzadas, recuperación de wallets, pausa, operaciones en lote, datos de la franquicia y reparto de ingresos. |
+| `registry/IdentityRegistry.sol` | Inversores verificados (wallet → ONCHAINID + país + vencimiento de KYC). |
+| `compliance/FranchiseCompliance.sol` | Reglas: máximo de inversores, tenencia máxima, países bloqueados, lock-up. |
+| `roles/AgentRole.sol` | Owner + agentes autorizados. |
+| `mocks/MockStablecoin.sol` | USDC de prueba (sólo local/tests). |
+| `agreements/BilateralAgreement.sol` | Base común: firma de una versión de los términos, vigencia, renovación, cláusulas, períodos de liquidación, notificación de incumplimiento con plazo de subsanación y terminación. |
+| `agreements/FranchiseAgreement.sol` | **Contrato 1.** Uso de marca, know-how versionado, territorio, duración, canon de entrada, regalía y fondo de publicidad, estándares con inspecciones y causales de terminación. |
+| `agreements/OperatingAgreement.sol` | **Contrato 2.** Local y seguro, reportes de ventas/costos/personal, KPIs, proveedores y compras, honorarios (fijo + éxito), auditorías y causales de terminación. |
 
 ## Uso
 
@@ -37,48 +52,20 @@ Para Sepolia define `SEPOLIA_RPC_URL`, `PRIVATE_KEY` y `PAYMENT_TOKEN`, y ejecut
 3. La franquicia deposita regalías: `stablecoin.approve(token, x)` + `token.distributeRevenue(x, "Enero")`.
 4. Cada inversor reclama: `token.claimRevenue()`.
 
+### Contratos 1 y 2
+
+1. Se despliegan en borrador. Mientras tanto las partes pueden agregar cláusulas (`addClause`) o cambiar el documento legal; cada cambio sube `termsVersion`.
+2. Cada parte firma la versión vigente (`sign(termsVersion)`) y una de ellas llama `activate()`. En el contrato 1 se cobra el canon de entrada.
+3. Cada período (mensual en el ejemplo):
+   - Contrato 1: el fideicomiso (o un delegado vía `setSalesReporter`) reporta ventas con `reportSales` y paga con `payRoyalty`.
+   - Contrato 2: la operadora presenta `submitReport`. El fideicomiso lo aprueba, lo observa dentro del plazo de revisión o lo deja aprobar tácitamente. Después paga con `payFees`.
+4. Mientras haya regalías u honorarios vencidos, `token.distributeRevenue` revierte: los inversores cobran después.
+5. Ante un incumplimiento: `notifyBreach(causal, evidencia)` → plazo de subsanación → `terminateForCause(id)`. Las causales verificables on-chain (pagos vencidos, reportes atrasados, KPIs, inspección o auditoría reprobada, franquicia terminada) sólo se pueden invocar y ejecutar si el incumplimiento existe y persiste.
+
 ## Limitaciones conocidas
 
 - El `IdentityRegistry` es simplificado: el agente es la fuente de verdad del KYC. El T-REX completo verifica claims de ONCHAINID firmados por emisores de confianza (`ClaimTopicsRegistry` + `TrustedIssuersRegistry`). Para producción considera `@tokenysolutions/t-rex` + `@onchain-id/solidity`.
 - Contratos no actualizables (sin proxy).
 - Los tokens congelados siguen generando ingresos; las wallets congeladas no pueden reclamarlos hasta ser descongeladas.
+- Los contratos 1 y 2 registran on-chain términos, reportes y pagos; el texto legal vinculante es el documento cuyo hash firman las partes. Las causales no verificables on-chain (uso indebido de marca, mala conducta, etc.) se resuelven fuera de la cadena.
 - No auditado. Requiere auditoría y revisión legal antes de usarse con valores reales.
-
-## Qué incluye
-
-| Archivo                                      | Función                                                   |
-| -------------------------------------------- | --------------------------------------------------------- |
-| `AGENTS.md`                                  | Entrada breve, reglas universales y selección de contexto |
-| `docs/FranToken-manual-consulta.md`          | Copia íntegra del manual recibido; fuente documental      |
-| `docs/PROJECT.md`                            | Resumen operativo y límites del dominio                   |
-| `docs/DECISIONS.md`                          | D01–D12 pendientes y decisiones del setup propuestas      |
-| `docs/ARCHITECTURE.md`                       | Opciones, límites modulares y ruta de implementación      |
-| `agent/CODING.md`                            | Reglas de código independientes del framework             |
-| `agent/FRONTEND.md`                          | Interfaces, estados, accesibilidad y precisión            |
-| `agent/BACKEND.md`                           | Autorización, dinero, transacciones e integraciones       |
-| `agent/BLOCKCHAIN.md`                        | Contratos, registro, finalización y controles             |
-| `agent/BUSINESS.md`                          | Derechos, evidencia y conexión con implementación         |
-| `agent/SECURITY.md`                          | Permisos del agente y amenazas del producto               |
-| `agent/QUALITY.md`                           | Pruebas por riesgo y criterios de cierre                  |
-| `agent/BOOTSTRAP.md`                         | Primer encargo ejecutable por un agente                   |
-| `agent/repo-config.json`                     | Rutas, stack, comandos y línea base descubiertos          |
-| `agent/TASK-TEMPLATE.md`, `agent/HANDOFF.md` | Alcance y memoria durable                                 |
-| `docs/adr/TEMPLATE.md`                       | Registro de decisiones con estado y aprobación            |
-| `agent/EVALUATION.md`                        | Casos para evaluar conducta del agente                    |
-| `scripts/validate_setup.py`                  | Comprobación local sin dependencias externas              |
-
-## Diseño y mantenimiento
-
-Un agente ejecutor es el modo base. Las guías son lentes de trabajo que puede aplicar el mismo agente; no son procesos simultáneos, skills instaladas ni un sistema multiagente. Una revisión separada se justifica por riesgo o tamaño y requiere que la tarea y el entorno habiliten delegación. No asignar varios agentes al mismo archivo sin partición y coordinación.
-
-Cargar siempre el resumen y las decisiones; leer solo las guías necesarias. Volver al manual para resolver matices. Evitar copiar el manual completo en cada tarea. Mantener memoria con rutas, decisiones y evidencia; no almacenar cadenas de razonamiento, secretos ni transcripciones extensas.
-
-Actualizar PROJECT cuando cambie un dato aprobado, DECISIONS cuando se resuelva una decisión, repo-config cuando cambie un comando verificado y HANDOFF al interrumpir trabajo relevante. Mantener propuestas separadas de aprobaciones. Revisar las instrucciones cuando un error se repita; eliminar duplicación antes de agregar reglas.
-
-El código existente usa Hardhat, Solidity 0.8.24 y una implementación propia que se presenta como ERC-3643. Su presencia no resuelve D01–D12 ni autoriza su uso en una oferta real. No hay frontend, backend, contratos de captación ni configuración de producción verificados. Las discrepancias de dominio están registradas en `docs/adr/0001-integracion-contratos-existentes.md`.
-
-## Evidencia y límites de entrega
-
-Base documental: manual v1.0 del 02-10-2026. El repositorio y sus pruebas locales se inspeccionaron durante el bootstrap; resultados y límites en `VERIFICATION.md`. No se validó una operación jurídica o financiera.
-
-Referencia de integración: [guía oficial de AGENTS.md](https://developers.openai.com/codex/guides/agents-md/), consultada el 04-10-2026. La carga real debe verificarse en la herramienta instalada. Este paquete no modifica permisos del runtime.
