@@ -1,6 +1,6 @@
 # Registro de decisiones
 
-Actualizado: 2026-10-04. Estado de todos los D01–D12: PENDIENTE, según manual recibido. Responsable de decisión y evidencia de aprobación: no designados.
+Actualizado: 2026-10-29. Estado de todos los D01–D12: PENDIENTE para operación real. Responsable de decisión y evidencia de aprobación: no designados.
 
 | ID | Pendiente | Bloquea en operación real |
 |---|---|---|
@@ -27,3 +27,7 @@ Actualizado: 2026-10-04. Estado de todos los D01–D12: PENDIENTE, según manual
 | S04 | Usar simulaciones para dependencias sin decisión | PROPUESTA | Validación de reglas y proveedores |
 
 Agregar decisiones mediante ADR con problema, alternativas, evidencia, decisión, estado, responsable, aprobación explícita y consecuencias. Los agentes pueden redactar propuestas; no pueden autoaprobar derechos económicos ni usar el silencio como aceptación. Registrar sustituciones y conservar el historial.
+
+## Información nueva de producto, sin cierre de las Dxx
+
+El usuario indicó el 2026-10-29 que la compra se haría en la web por un precio propuesto de USD 10 por token más gas; un tercero gestionaría el cobro externo y su conciliación, tras la cual se emitiría el token. FranToken recibiría 0,5 % de los USD 10 como supuesto provisional y el neto correspondería al fideicomiso. El inversor recibiría ingresos, todavía sin fórmula económica. El tercero gestionaría la campaña fallida, pero no se definieron condiciones de cierre o devolución. Se mantiene el estado PENDIENTE de D02–D06, D08 y D12 para la operación real; el prototipo local sólo parametriza el flujo descrito. Véase ADR-0002.

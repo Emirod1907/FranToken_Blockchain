@@ -1,22 +1,22 @@
 # FranToken — Tokenización de franquicias (ERC-3643)
 
-Security token permisionado basado en ERC-3643 (T-REX) que representa participaciones en una franquicia, con reparto de regalías en stablecoin, y los contratos que vinculan al fideicomiso con el franquiciante y con la operadora.
+Prototipo de token permisionado y acuerdos asociados a una emisión para financiar una franquicia. El derecho del inversor es a ingresos, pero su fórmula, prioridad y condiciones todavía no están definidas. Los pagos al franquiciante se distinguen de las distribuciones al inversor.
 
 ## Modelo
 
 1. Se analiza la viabilidad de la franquicia y se crea un fideicomiso.
-2. El fideicomiso vende los tokens y con lo recaudado compra la franquicia.
-3. FranToken SAS cobra comisión por la gestión y por la ganancia generada.
+2. El inversor compra tokens desde la web. Un tercero gestiona el cobro externo y su conciliación; sólo entonces se emiten los tokens.
+3. Sobre el precio ilustrativo de USD 10 por token, FranToken recibiría el 0,5 % (USD 0,05) y el fideicomiso USD 9,95. El gas se paga aparte. La liquidación monetaria ocurre fuera de estos contratos.
 4. Un administrador profesional (operadora) gestiona el local.
 
 | # | Partes | Contrato | Estado |
 |---|---|---|---|
 | 1 | Franquiciante ↔ Fideicomiso | `agreements/FranchiseAgreement.sol` | Implementado |
 | 2 | Fideicomiso ↔ Operadora | `agreements/OperatingAgreement.sol` | Implementado |
-| 3 | Fideicomiso ↔ FranToken SAS | Contrato de servicios y honorarios | Pendiente (Martín) |
-| 4 | Fideicomiso / emisor ↔ Inversor | Documentación de inversión (usa `FranchiseToken`) | Pendiente (Martín) |
+| 3 | Fideicomiso ↔ FranToken SAS | `agreements/PlatformServicesAgreement.sol` | Prototipo: firmas y cálculo de comisión; sin cobro on-chain |
+| 4 | Fideicomiso / emisor ↔ Inversor | `agreements/InvestmentAgreement.sol` | Prototipo por emisión: aceptación de términos y emisión tras conciliación externa |
 
-Los contratos 3 y 4 pueden reutilizar `BilateralAgreement` (firmas, vigencia, cláusulas, incumplimientos y terminación). Si generan pagos senior a los inversores, implementan `IPaymentObligation` y se registran en el token con `addSeniorObligation`.
+Los contratos 3 y 4 no usan `BilateralAgreement`: ese contrato presupone períodos y pagos en un token de pago, mientras que la compra definida para esta etapa se cobra fuera de la cadena. El contrato 3 no se registra como obligación senior: la prioridad de la comisión frente a otros pagos no está definida.
 
 ## Contratos
 
@@ -30,6 +30,8 @@ Los contratos 3 y 4 pueden reutilizar `BilateralAgreement` (firmas, vigencia, cl
 | `agreements/BilateralAgreement.sol` | Base común: firma de una versión de los términos, vigencia, renovación, cláusulas, períodos de liquidación, notificación de incumplimiento con plazo de subsanación y terminación. |
 | `agreements/FranchiseAgreement.sol` | **Contrato 1.** Uso de marca, know-how versionado, territorio, duración, canon de entrada, regalía y fondo de publicidad, estándares con inspecciones y causales de terminación. |
 | `agreements/OperatingAgreement.sol` | **Contrato 2.** Local y seguro, reportes de ventas/costos/personal, KPIs, proveedores y compras, honorarios (fijo + éxito), auditorías y causales de terminación. |
+| `agreements/PlatformServicesAgreement.sol` | **Contrato 3.** Términos económicos firmados por fideicomiso y FranToken; calcula comisión y neto en unidades mínimas de la moneda configurada. |
+| `agreements/InvestmentAgreement.sol` | **Contrato 4.** Términos comunes por emisión, aceptación por wallet y emisión única por compra y referencia de pago tras atestación del conciliador externo. |
 
 ## Uso
 
@@ -42,15 +44,15 @@ npm run node   # en otra terminal
 npm run deploy:local
 ```
 
-Para Sepolia define `SEPOLIA_RPC_URL`, `PRIVATE_KEY` y `PAYMENT_TOKEN`, y ejecuta
-`npx hardhat run scripts/deploy.js --network sepolia`.
+`scripts/deploy.js` usa importes y hashes de documentos ficticios y sólo admite redes locales.
 
 ## Flujo operativo
 
 1. El agente KYC registra inversores: `registry.registerIdentity(wallet, onchainId, pais)`.
-2. El agente emite participaciones: `token.mint(inversor, cantidad)`.
-3. La franquicia deposita regalías: `stablecoin.approve(token, x)` + `token.distributeRevenue(x, "Enero")`.
-4. Cada inversor reclama: `token.claimRevenue()`.
+2. Las partes del contrato 3 firman con `services.sign()`; el inversor acepta los términos del contrato 4 con `investment.acceptTerms()`.
+3. El proveedor externo cobra y concilia USD 10 por token, sin incluir gas. Su wallet autorizada llama `investment.issueAfterPayment(purchaseId, paymentReference, inversor, cantidad, importeEnCentavos, evidenceHash)`.
+4. El contrato 4 comprueba importe, aceptación y unicidad, y llama `token.mint`. La comisión de FranToken y el neto del fideicomiso quedan registrados en `PurchaseIssued` para conciliación externa; la transferencia de dinero no ocurre on-chain.
+5. El reparto actual del token (`distributeRevenue` / `claimRevenue`) es un mecanismo técnico existente. Aún necesita reglas aprobadas de ingresos distribuibles, corte, reservas y pagos antes de representar el derecho económico real.
 
 ### Contratos 1 y 2
 
@@ -69,3 +71,7 @@ Para Sepolia define `SEPOLIA_RPC_URL`, `PRIVATE_KEY` y `PAYMENT_TOKEN`, y ejecut
 - Los tokens congelados siguen generando ingresos; las wallets congeladas no pueden reclamarlos hasta ser descongeladas.
 - Los contratos 1 y 2 registran on-chain términos, reportes y pagos; el texto legal vinculante es el documento cuyo hash firman las partes. Las causales no verificables on-chain (uso indebido de marca, mala conducta, etc.) se resuelven fuera de la cadena.
 - No auditado. Requiere auditoría y revisión legal antes de usarse con valores reales.
+- Los contratos 3 y 4 no custodian aportes ni ejecutan devoluciones. El tratamiento de una campaña fallida corresponde al tercero y a términos todavía no definidos.
+- El verificador externo es la fuente de la atestación de pago; una referencia y un hash en cadena no demuestran por sí solos que hubo cobro final o reparto monetario. La misma referencia de pago no puede reutilizarse dentro de una instancia del contrato 4; la unicidad entre emisiones depende del conciliador externo.
+- El contrato 4 no define fórmula ni calendario del derecho a ingresos. La aceptación inicial por wallet no impone por sí sola aceptación de términos a un adquirente posterior del token.
+- En este flujo el verificador paga el gas de la transacción de emisión; cualquier cargo de red al comprador se liquida externamente y no está calculado ni cobrado por los contratos.
