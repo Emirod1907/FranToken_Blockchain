@@ -4,18 +4,24 @@ const { ethers, network } = require("hardhat");
  * Despliega la suite ERC-3643 para una franquicia y los contratos del fideicomiso:
  *   IdentityRegistry -> FranchiseCompliance -> FranchiseToken
  *   FranchiseAgreement (CONTRATO 1) -> OperatingAgreement (CONTRATO 2)
+ *   PlatformServicesAgreement (CONTRATO 3) -> InvestmentAgreement (CONTRATO 4)
  *
  * Los contratos 1 y 2 quedan en borrador: cada parte debe firmar (`sign`) y luego `activate`.
+ * El contrato 3 también requiere ambas firmas; el 4 requiere términos aceptados por cada comprador.
+ * Sólo usa redes locales: todos los importes y hashes de documentos son ficticios.
  *
  * Variables de entorno opcionales:
  *   PAYMENT_TOKEN  dirección del stablecoin de pago (USDC, etc.). En redes locales se
  *                  despliega un MockStablecoin si no se indica.
- *   FRANCHISOR, TRUST, OPERATOR  wallets del franquiciante, el fideicomiso y la operadora.
+ *   FRANCHISOR, TRUST, OPERATOR, PLATFORM, PAYMENT_VERIFIER  wallets de prueba de cada rol.
  *                  En redes locales se usan cuentas de prueba si no se indican.
  */
 async function main() {
   const [deployer, ...testAccounts] = await ethers.getSigners();
   const isLocal = ["hardhat", "localhost"].includes(network.name);
+  if (!isLocal) {
+    throw new Error("Este script usa términos económicos y documentos de ejemplo; sólo admite redes locales");
+  }
   console.log(`Red: ${network.name}`);
   console.log(`Deployer: ${deployer.address}`);
 
@@ -27,6 +33,8 @@ async function main() {
   const franchisor = party("FRANCHISOR", 0);
   const trust = party("TRUST", 1);
   const operator = party("OPERATOR", 2);
+  const platform = party("PLATFORM", 3);
+  const paymentVerifier = party("PAYMENT_VERIFIER", 4);
 
   let paymentToken = process.env.PAYMENT_TOKEN;
   if (!paymentToken) {
@@ -66,7 +74,6 @@ async function main() {
   // para poder ejecutar recoveryAddress.
   await (await registry.addAgent(deployer.address)).wait();
   await (await registry.addAgent(tokenAddress)).wait();
-  await (await token.addAgent(deployer.address)).wait();
 
   await (
     await token.setFranchiseInfo({
@@ -153,7 +160,33 @@ async function main() {
   await (await token.addSeniorObligation(franchiseAddress)).wait();
   await (await token.addSeniorObligation(operatingAddress)).wait();
 
-  console.log("Despliegue completado.");
+  // ---- Acuerdos 3 y 4: ejemplo local con cobro y conciliación externos ----
+  const services = await ethers.deployContract("PlatformServicesAgreement", [
+    trust,
+    platform,
+    "0x555344", // USD, en centavos
+    2,
+    50, // 0,5 % ilustrativo; comisión = 5 centavos por token de USD 10
+    ethers.id("DEMO: términos de servicios por definir"),
+  ]);
+  await services.waitForDeployment();
+  console.log(`PlatformServicesAgreement (contrato 3): ${await services.getAddress()}`);
+
+  const investment = await ethers.deployContract("InvestmentAgreement", [
+    trust,
+    tokenAddress,
+    await services.getAddress(),
+    paymentVerifier,
+    1_000, // USD 10 en centavos; no incluye gas
+    ethers.id("DEMO: derecho a ingresos sin fórmula aprobada"),
+  ]);
+  await investment.waitForDeployment();
+  const investmentAddress = await investment.getAddress();
+  await (await token.addAgent(investmentAddress)).wait();
+  await (await token.setIssuanceController(investmentAddress)).wait();
+  console.log(`InvestmentAgreement (contrato 4): ${investmentAddress}`);
+
+  console.log("Despliegue local completado. Los contratos 1–3 requieren firmas; las compras requieren conciliación externa.");
 }
 
 main().catch((error) => {
