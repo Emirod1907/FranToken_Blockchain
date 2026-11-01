@@ -6,6 +6,8 @@
 - Referencia verificable de aprobación: ninguna
 - Decisiones relacionadas: D02–D06, D08–D12
 
+> Nota de vigencia (2026-11-01): documento histórico en estado PROPUESTA. El [modelo vigente](../business/BUSINESS-LOGIC.md) fija USD 10 por token más fees blockchain; el 0,5 % permanece como supuesto del prototipo. Ver [reconciliación técnica](../business/IMPLEMENTATION-STATUS.md) para capacidades y brechas actuales.
+
 ## Problema, derechos afectados y restricciones
 
 El README identifica dos relaciones aún sin implementación: fideicomiso ↔ FranToken SAS (servicios y honorarios) y fideicomiso/emisor ↔ inversor (derecho de inversión). El código actual permite emitir tokens y distribuir un importe, pero no vincula esas operaciones a suscripciones conciliadas ni a derechos económicos aprobados. La lógica de negocio del repositorio puede estar desactualizada; los términos de ambos acuerdos requieren confirmación del usuario.
