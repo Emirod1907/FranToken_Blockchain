@@ -1,0 +1,86 @@
+# Red Ethereum privada de prueba: 4 validadores Hyperledger Besu con consenso QBFT.
+# Sólo para desarrollo y demostración local: claves y cuentas de prueba, sin valor económico.
+#
+#   docker compose -f infra/besu/docker-compose.yml up -d     # levantar
+#   docker compose -f infra/besu/docker-compose.yml down -v   # borrar la red (génesis, claves y bloques)
+#
+# RPC de cada nodo en el host: 18545 (nodo 1) a 18548 (nodo 4).
+
+x-besu-node: &besu-node
+  image: hyperledger/besu:26.9.0
+  entrypoint: ["bash", "/besu-config/start-node.sh"]
+  environment: &besu-env
+    JAVA_OPTS: "-Xmx768m"
+  volumes:
+    - besu-data:/data
+    - ./:/besu-config:ro
+  depends_on:
+    besu-init:
+      condition: service_completed_successfully
+  restart: unless-stopped
+
+services:
+  besu-init:
+    image: hyperledger/besu:26.9.0
+    user: root
+    entrypoint: ["bash", "/besu-config/init-network.sh"]
+    environment:
+      NODE_COUNT: "4"
+      BOOTNODE_IP: "172.16.240.11"
+    volumes:
+      - besu-data:/data
+      - ./:/besu-config:ro
+    restart: "no"
+
+  validator1:
+    <<: *besu-node
+    environment:
+      <<: *besu-env
+      NODE_ID: "1"
+      P2P_HOST: "172.16.240.11"
+    ports: ["18545:8545"]
+    networks:
+      besu:
+        ipv4_address: 172.16.240.11
+
+  validator2:
+    <<: *besu-node
+    environment:
+      <<: *besu-env
+      NODE_ID: "2"
+      P2P_HOST: "172.16.240.12"
+    ports: ["18546:8545"]
+    networks:
+      besu:
+        ipv4_address: 172.16.240.12
+
+  validator3:
+    <<: *besu-node
+    environment:
+      <<: *besu-env
+      NODE_ID: "3"
+      P2P_HOST: "172.16.240.13"
+    ports: ["18547:8545"]
+    networks:
+      besu:
+        ipv4_address: 172.16.240.13
+
+  validator4:
+    <<: *besu-node
+    environment:
+      <<: *besu-env
+      NODE_ID: "4"
+      P2P_HOST: "172.16.240.14"
+    ports: ["18548:8545"]
+    networks:
+      besu:
+        ipv4_address: 172.16.240.14
+
+networks:
+  besu:
+    ipam:
+      config:
+        - subnet: 172.16.240.0/24
+
+volumes:
+  besu-data:

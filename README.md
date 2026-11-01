@@ -48,6 +48,23 @@ npm run deploy:local
 
 `scripts/deploy.js` usa importes y hashes de documentos ficticios y sólo admite redes locales.
 
+### Red local de varios nodos (Hyperledger Besu)
+
+Red Ethereum privada en Docker con 4 validadores Besu y consenso QBFT (tolera 1 nodo caído). Bloques cada 2 s, chain ID 2026. Sirve para ver consenso, propagación y latencia reales con los mismos contratos; no es la elección de red de producción (decisión D10 pendiente).
+
+```bash
+npm run besu:up        # genera génesis y claves la primera vez y levanta los 4 nodos
+npm run besu:status    # bloque, pares y validadores de cada nodo
+npm run deploy:besu    # despliega los contratos en la red Besu
+npm run besu:logs      # ver los logs
+npm run besu:down      # detener (conserva la cadena)
+npm run besu:reset     # borrar la red completa (bloques, génesis y claves)
+```
+
+- RPC en el host: nodo 1 en `http://127.0.0.1:18545`, nodos 2–4 en 18546–18548.
+- Las claves de los validadores se generan dentro del volumen de Docker y no se guardan en el repositorio. Las cuentas que despliegan son las de prueba públicas de Hardhat, con 1.000 ETH de prueba cada una en el génesis: no sirven fuera de esta red.
+- Variante de un nodo para Railway: `infra/besu/Dockerfile.railway` (Root Directory `infra/besu`, `RAILWAY_DOCKERFILE_PATH=Dockerfile.railway` y un volumen en `/data`). El backend la usa por red privada en `http://<servicio>.railway.internal:8545`.
+
 ## Flujo operativo
 
 1. El agente KYC registra inversores: `registry.registerIdentity(wallet, onchainId, pais)`.

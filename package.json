@@ -7,7 +7,13 @@
     "test": "hardhat test",
     "compile": "hardhat compile",
     "deploy:local": "hardhat run scripts/deploy.js --network localhost",
-    "node": "hardhat node"
+    "node": "hardhat node",
+    "besu:up": "docker compose -f infra/besu/docker-compose.yml up -d",
+    "besu:down": "docker compose -f infra/besu/docker-compose.yml down",
+    "besu:reset": "docker compose -f infra/besu/docker-compose.yml down -v",
+    "besu:logs": "docker compose -f infra/besu/docker-compose.yml logs -f",
+    "besu:status": "node scripts/besu-status.js",
+    "deploy:besu": "hardhat run scripts/deploy.js --network besu"
   },
   "keywords": [],
   "author": "",

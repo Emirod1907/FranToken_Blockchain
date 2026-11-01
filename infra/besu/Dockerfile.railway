@@ -1,0 +1,14 @@
+# Variante de un solo validador QBFT para Railway (u otro host de contenedores).
+# En Railway: Root Directory = infra/besu, variable RAILWAY_DOCKERFILE_PATH=Dockerfile.railway
+# y un volumen montado en /data para conservar génesis, clave y bloques entre reinicios.
+# El backend se conecta por la red privada: http://<nombre-del-servicio>.railway.internal:8545
+FROM hyperledger/besu:26.9.0
+
+COPY qbftConfigFile.json init-network.sh start-node.sh /besu-config/
+
+# Los volúmenes de Railway se montan como root.
+USER root
+ENV NODE_COUNT=1 NODE_ID=1 DATA_DIR=/data JAVA_OPTS=-Xmx768m
+EXPOSE 8545
+
+ENTRYPOINT ["bash", "-c", "bash /besu-config/init-network.sh && exec bash /besu-config/start-node.sh"]

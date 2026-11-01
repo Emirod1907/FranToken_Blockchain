@@ -13,6 +13,12 @@ module.exports = {
   networks: {
     hardhat: {},
     localhost: { url: "http://127.0.0.1:8545" },
+    // Red Besu QBFT local (infra/besu). Mnemonic público de prueba de Hardhat: sólo para esta red.
+    besu: {
+      url: process.env.BESU_RPC_URL || "http://127.0.0.1:18545",
+      chainId: 2026,
+      accounts: { mnemonic: "test test test test test test test test test test test junk", count: 6 },
+    },
     ...(SEPOLIA_RPC_URL && PRIVATE_KEY
       ? { sepolia: { url: SEPOLIA_RPC_URL, accounts: [PRIVATE_KEY] } }
       : {}),

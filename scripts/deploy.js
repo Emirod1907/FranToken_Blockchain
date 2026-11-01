@@ -18,7 +18,7 @@ const { ethers, network } = require("hardhat");
  */
 async function main() {
   const [deployer, ...testAccounts] = await ethers.getSigners();
-  const isLocal = ["hardhat", "localhost"].includes(network.name);
+  const isLocal = ["hardhat", "localhost", "besu"].includes(network.name);
   if (!isLocal) {
     throw new Error("Este script usa términos económicos y documentos de ejemplo; sólo admite redes locales");
   }
