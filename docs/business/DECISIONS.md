@@ -1,5 +1,9 @@
 # Decisiones y parámetros del negocio
 
+## Implementación autorizada desde develop
+
+El 2026-11-01 el usuario pidió implementar frontend y blockchain desde `develop` en ramas nuevas. Se crearon ramas `feat/academic-mvp` y se incorporaron las definiciones documentales aprobadas como prerrequisito. Esta autorización posterior sustituye la limitación anterior de «solo documentación» para el MVP; no modifica las condiciones de una operación real. La integración local usa rutas de servidor Next sin alterar el repositorio backend separado.
+
 ## Decisiones aprobadas exclusivamente para el MVP
 
 **Confirmación del usuario, 2026-11-01:** [MVP académico y evidencia de aprobación](MVP-ACADEMICO.md#fuente-autoridad-y-límites). MVP-01–MVP-06 están aprobadas para esta demostración: pago simulado, inicio manual de operación, períodos mensuales con importe manual, prorrata al ejecutar y reclamo individual, transferencias deshabilitadas, Hardhat local y token de pago de prueba. Implementación pendiente; el encargo actual autoriza solo documentación y ramas.

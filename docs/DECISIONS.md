@@ -1,5 +1,9 @@
 # Registro de decisiones
 
+## MVP-2026-11-01 — Implementación autorizada
+
+El usuario autorizó implementar frontend y blockchain desde `develop` en ramas nuevas. La rama `feat/academic-mvp` aplica el alcance aprobado mediante un token académico derivado y un despliegue local separado. [ADR-0004](adr/0004-implementacion-mvp-academico.md) registra actores, guardas, amenazas, alternativas y verificación. La limitación «solo documentación» de los antecedentes corresponde a la entrega anterior.
+
 ## MVP-2026-11-01 — Alcance académico aprobado
 
 Responsable de la definición: usuario del proyecto. Estado: **APROBADO exclusivamente para el MVP académico; implementación pendiente**. Evidencia: [confirmación del usuario y seis definiciones](business/MVP-ACADEMICO.md#fuente-autoridad-y-límites). Decisión técnica de alcance: [ADR-0003](adr/0003-alcance-mvp-academico.md).

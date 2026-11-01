@@ -13,7 +13,8 @@
     "besu:reset": "docker compose -f infra/besu/docker-compose.yml down -v",
     "besu:logs": "docker compose -f infra/besu/docker-compose.yml logs -f",
     "besu:status": "node scripts/besu-status.js",
-    "deploy:besu": "hardhat run scripts/deploy.js --network besu"
+    "deploy:besu": "hardhat run scripts/deploy.js --network besu",
+    "deploy:academic": "hardhat run scripts/deploy-academic.js --network localhost"
   },
   "keywords": [],
   "author": "",

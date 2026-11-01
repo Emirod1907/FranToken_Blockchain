@@ -1,5 +1,19 @@
 # Estado técnico frente al modelo de negocio
 
+## Implementación del MVP académico — 2026-11-01
+
+La instrucción posterior del usuario autorizó implementar desde `develop` en ramas nuevas `feat/academic-mvp`. Las notas anteriores de «solo documentación» describen la entrega previa. El backend separado no se modifica: un gateway Next local coordina la confirmación simulada y verifica las firmas de wallet.
+
+- Blockchain: `AcademicFranchiseToken` agrega estados Draft/Published/Operating/Closed, emisión restringida a C4 vinculado, rechazo de wallet congelada/pausa, transferencias ordinarias deshabilitadas y `distributeMonthly` con unicidad por contrato/período. El cierre conserva reclamos existentes.
+- Despliegue académico: cuatro franquicias ilustrativas vinculadas al catálogo, tokens enteros a USD 10, C3 firmado con cuentas de prueba, C4 exclusivo, registro manual demo y activo de pago de prueba. El script genera un manifiesto sin claves.
+- Frontend: compra desde la ficha, términos firmados, referencia persistida antes de enviar, recuperación del resultado C4, tenencias/historial leídos de cadena, reclamo por wallet y administración de estado/distribución mensual.
+- Autorización: firma vinculada a origen local, chain ID 31337, despliegue, vencimiento y payload. La cuenta administradora se verifica en el gateway y los contratos; el acceso por email sigue siendo navegación demo, sin autoridad para emitir o distribuir.
+- Los ingresos se fondean manualmente con mUSDC y se asignan según saldos al ejecutar. No hay banco, scheduler, snapshot anterior ni fórmula de retorno fijo.
+
+Validación: 57 pruebas de contratos y ocho escenarios integrados de cliente wallet → handler Next → EVM Hardhat en memoria. Typescript, Biome del alcance, arquitectura y build Next con Webpack pasan. El entorno rechaza abrir el puerto 8545 (EPERM): no se verificó interacción visual con extensión de wallet ni transporte HTTP real. Las pruebas integradas sustituyen transporte TCP, no reglas ni ejecución de contratos. No se ejecutaron operaciones con valor real.
+
+Las tablas que siguen conservan el alcance objetivo anterior y la revisión del modelo completo. Para ejecutar la versión actual, consultar las guías enlazadas desde el README de cada repositorio.
+
 ## Lectura vigente para el MVP académico
 
 El usuario aprobó el [alcance académico](MVP-ACADEMICO.md) el 2026-11-01. La aprobación define comportamiento objetivo; **esta actualización no implementa funciones ni ejecuta pruebas de producto**. La revisión histórica de abajo conserva sus fechas y límites y no certifica el estado de todas las ramas actuales.

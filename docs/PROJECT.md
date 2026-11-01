@@ -1,5 +1,9 @@
 # Contexto operativo
 
+## Entrega de implementación académica
+
+La rama `feat/academic-mvp` parte del `develop` local e incorpora las definiciones aprobadas antes de implementar. El recorrido de compra simulada, emisión C4, distribución mensual y reclamo está implementado; las evidencias y limitaciones se registran en [estado técnico](business/IMPLEMENTATION-STATUS.md). La autorización posterior del usuario habilita este trabajo y sustituye la restricción documental de la entrega anterior. No incluye dinero real ni red pública.
+
 ## Objetivo actual: MVP académico confirmado
 
 El alcance de entrega vigente es el [MVP académico aprobado](business/MVP-ACADEMICO.md): comprar tokens a USD 10 con pago simulado y emisión C4, iniciar operación por administrador, distribuir mensualmente un importe manual a prorrata y reclamar ingresos con token de prueba en Hardhat local. Sin transferencias entre inversores, sin bancos ni automatización completa del negocio. La aprobación no modifica el código ni cierra pendientes de una operación real.
