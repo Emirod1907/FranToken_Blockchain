@@ -1,5 +1,11 @@
 # Registro de decisiones
 
+## MVP-2026-11-01 — Alcance académico aprobado
+
+Responsable de la definición: usuario del proyecto. Estado: **APROBADO exclusivamente para el MVP académico; implementación pendiente**. Evidencia: [confirmación del usuario y seis definiciones](business/MVP-ACADEMICO.md#fuente-autoridad-y-límites). Decisión técnica de alcance: [ADR-0003](adr/0003-alcance-mvp-academico.md).
+
+Se eligen Hardhat local, pago simulado, inicio manual de operación, distribuciones mensuales con importe manual y prorrata al ejecutar, reclamo individual y transferencias deshabilitadas. La autorización actual es documental y de publicación en rama; no incluye implementación o despliegue. D03/D04/D06/D08/D09/D10 tienen estas respuestas para la demo, sin cerrar los pendientes de valor real de las tablas siguientes.
+
 Actualizado: 2026-11-01. Estado de todos los D01–D12: PENDIENTE para operación real. Responsable de decisión y evidencia de aprobación: no designados.
 
 | ID | Pendiente | Bloquea en operación real |

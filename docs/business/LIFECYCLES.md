@@ -1,5 +1,25 @@
 # Ciclos de vida del proyecto y del token
 
+## Ciclo simplificado aprobado para el MVP
+
+El [MVP académico confirmado](MVP-ACADEMICO.md) usa el recorrido siguiente como objetivo de implementación:
+
+| Origen → destino | Evento / guarda | Acción de demostración |
+|---|---|---|
+| Preparación → Publicada | Administrador publica franquicia de prueba con token identificado | Habilitar compra a USD 10 por token; gas separado. |
+| Publicada → Publicada | Compra con términos aceptados y elegibilidad demo | Confirmar pago simulado y emitir una sola vez mediante C4. |
+| Publicada → En operación | Administrador marca inicio de operación | Habilitar registro de distribuciones mensuales. |
+| En operación → En operación | Distribución mensual positiva y aún no acreditada para esa franquicia/período | Fondear con token de prueba y asignar a prorrata de los saldos al ejecutar. |
+| En operación → En operación | Compra habilitada y confirmada | Emitir sin asignar ingresos de distribuciones anteriores. |
+| Publicada / En operación → Cerrada | Administrador cierra el proyecto de demostración | Detener nuevas compras/distribuciones; conservar saldos e ingresos ya asignados. No significa liquidación económica. |
+| Saldo de ingreso disponible → Cobrado | Titular reclama y se confirma la transacción | Transferir el token de pago de prueba una sola vez por saldo reclamable. |
+
+Los tokens no se transfieren entre inversores en esta versión. La restricción debe cubrir transfer y transferFrom y permitir emisión y reclamos. El mes puede simularse para la presentación; no se exige un scheduler. Una distribución asigna ingresos y el reclamo los paga: son eventos diferentes.
+
+Los DTE completos conservados a continuación son referencia del modelo futuro. Sus campañas, lock-up transferible, devoluciones, liquidación y quema económica no son requisitos de entrega del MVP. Estos estados documentados no implican una implementación nueva.
+
+## DTE completos de referencia
+
 Actualizado: 2026-11-01. Transcripción funcional de los [dos DTE recibidos](source/README.md). Notación: evento `[condición] / acción`. Son reglas del modelo; no implican una máquina de estados implementada. Ver [modelo](BUSINESS-LOGIC.md) y [brechas técnicas](IMPLEMENTATION-STATUS.md).
 
 ## Proyecto de franquicia

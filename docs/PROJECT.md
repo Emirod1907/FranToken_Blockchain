@@ -1,5 +1,11 @@
 # Contexto operativo
 
+## Objetivo actual: MVP académico confirmado
+
+El alcance de entrega vigente es el [MVP académico aprobado](business/MVP-ACADEMICO.md): comprar tokens a USD 10 con pago simulado y emisión C4, iniciar operación por administrador, distribuir mensualmente un importe manual a prorrata y reclamar ingresos con token de prueba en Hardhat local. Sin transferencias entre inversores, sin bancos ni automatización completa del negocio. La aprobación no modifica el código ni cierra pendientes de una operación real.
+
+Los antecedentes siguientes describen el modelo completo y el contexto técnico anterior. Las referencias a fórmula, periodicidad o red pendientes se refieren a valor real; para la demostración rigen las definiciones aprobadas enlazadas arriba.
+
 Fuentes vigentes: [modelo de negocio](business/BUSINESS-LOGIC.md), [DTE](business/LIFECYCLES.md), [estado frente al modelo](business/IMPLEMENTATION-STATUS.md) y [material recibido](business/source/README.md). Actualizado: 2026-11-01. El manual y las respuestas del 29-10-2026 son antecedentes; no prevalecen sobre estas definiciones.
 
 FranToken propone financiar la puesta en marcha de franquicias mediante aportes canalizados a un fideicomiso y representar ciertos derechos con tokens. El negocio operativo debe aportar los fondos que permitan cumplir distribuciones contractuales. La plataforma no se presume fiduciaria, custodio ni emisora.

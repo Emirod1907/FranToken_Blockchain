@@ -1,5 +1,11 @@
 # FranToken — Tokenización de franquicias (ERC-3643)
 
+## Alcance vigente: MVP académico
+
+El usuario confirmó el [MVP académico](docs/business/MVP-ACADEMICO.md): compra a USD 10 con pago simulado y emisión C4; inicio de operación manual; distribuciones mensuales de importe manual, a prorrata al ejecutar; reclamo por inversor; transferencias deshabilitadas; Hardhat local y token de pago de prueba. Gas separado e identificado como de prueba. **Especificación aprobada, implementación pendiente.** Esta actualización modifica solo documentación.
+
+El modelo completo y los antecedentes técnicos siguientes se conservan como referencia; campaña, bancos, liquidación y cascada contable completa no son condiciones de entrega del MVP.
+
 Prototipo de token permisionado y acuerdos asociados a una emisión para financiar una franquicia. El derecho del inversor es a ingresos; el modelo declara una cascada de pagos, pero su fórmula y parámetros contractuales finales siguen pendientes. Los pagos al franquiciante se distinguen de las distribuciones al inversor.
 
 Documentación vigente: [modelo de negocio](docs/business/BUSINESS-LOGIC.md), [ciclos de vida DTE](docs/business/LIFECYCLES.md), [estado técnico y brechas](docs/business/IMPLEMENTATION-STATUS.md), [decisiones](docs/business/DECISIONS.md) y [fuentes](docs/business/source/README.md).

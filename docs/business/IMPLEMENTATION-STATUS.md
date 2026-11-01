@@ -1,5 +1,26 @@
 # Estado técnico frente al modelo de negocio
 
+## Lectura vigente para el MVP académico
+
+El usuario aprobó el [alcance académico](MVP-ACADEMICO.md) el 2026-11-01. La aprobación define comportamiento objetivo; **esta actualización no implementa funciones ni ejecuta pruebas de producto**. La revisión histórica de abajo conserva sus fechas y límites y no certifica el estado de todas las ramas actuales.
+
+| Prioridad para el MVP | Capacidad existente / brecha a resolver |
+|---|---|
+| Compra integrada con C4 | C4 dispone de aceptación y emisión idempotente por compra/pago. Falta completar el recorrido web/API con confirmación simulada, referencias persistidas y controlador exclusivo configurado. El mint administrativo directo no sustituye la compra. |
+| Franquicia y token | Vincular cada ficha publicada con su emisión, contrato, red, precio y disponibilidad; estados publicada / en operación / cerrada. |
+| Precio y gas | USD 10 por token; actualizar ejemplos incompatibles y separar gas local de prueba. La comisión C3 del 0,5 % no se convierte en tasa definitiva. |
+| Distribución mensual | Reutilizar distributeRevenue con fondeo de prueba; falta registrar franquicia/período único y comprobar inicio de operación. El administrador carga el importe distribuible, sin balance real. |
+| Cobro e historial | claimRevenue ya existe. Integrar consulta de saldo e ingresos, firma del reclamo, confirmación y referencias de compras/cobros. |
+| Duplicados y recuperación | Conservar referencias de compra y transacción, recuperar resultados inciertos y evitar volver a acreditar una distribución del mismo período. |
+| Tenencias | Consultar contratos del proyecto; los arrays/filas demo no son fuente de saldo operativo. No se exige indexador completo. |
+| Restricciones mínimas | Autenticación, usuario/admin, control de wallet y elegibilidad manual demo. Deshabilitar transfer/transferFrom on-chain y mantener emisión/reclamos; documentar alcance de pausa. |
+
+Las brechas de KYC bilateral, recuperación y obligaciones C2 descritas en la revisión general se conservan como hallazgos, sin convertir la corrección integral de subsistemas fuera de uso en condición de entrega del MVP. El recorrido académico debe usar sus controles mínimos de forma coherente. No basta ocultar en la UI funciones que deban estar bloqueadas on-chain.
+
+Fuera de alcance: bancos, conciliación real, campaña/devoluciones, liquidación, reservas e impuestos, cascada C1–C3, reemplazo de operadora y mercado secundario. La revisión extensa siguiente pertenece al modelo completo, no al checklist de aceptación del MVP.
+
+## Revisión histórica frente al modelo completo
+
 Actualizado: 2026-11-01. Fuentes: [informe recibido](source/estado-vs-modelo.pdf), [presentación](source/presentacion-final.md), [DTE](LIFECYCLES.md) y lectura estática del código de los tres repositorios. Esta revisión no ejecutó contratos, desplegó servicios ni certificó cumplimiento ERC-3643, seguridad o validez jurídica.
 
 ## Evidencia y cronología
