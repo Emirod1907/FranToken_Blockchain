@@ -55,6 +55,9 @@ contract FranchiseToken is IERC3643, ERC20, Pausable, ReentrancyGuard, AgentRole
 
     /// @notice Máximo de participaciones emitibles (0 = sin límite).
     uint256 public immutable maxSupply;
+    /// @notice Contrato exclusivo para nuevas emisiones, si se vincula antes del primer mint.
+    address public issuanceController;
+    bool public issuanceStarted;
     /// @notice Número de wallets con saldo > 0.
     uint256 public holderCount;
 
@@ -76,6 +79,7 @@ contract FranchiseToken is IERC3643, ERC20, Pausable, ReentrancyGuard, AgentRole
     event RevenueClaimed(address indexed holder, uint256 amount);
     event SeniorObligationAdded(address indexed obligation);
     event SeniorObligationRemoved(address indexed obligation);
+    event IssuanceControllerSet(address indexed controller);
 
     error AddressIsFrozen(address account);
     error InsufficientFreeBalance(address account, uint256 requested, uint256 available);
@@ -94,6 +98,10 @@ contract FranchiseToken is IERC3643, ERC20, Pausable, ReentrancyGuard, AgentRole
     error TooManyObligations();
     error ObligationAlreadyAdded(address obligation);
     error ObligationNotFound(address obligation);
+    error IssuanceControllerAlreadySet();
+    error IssuanceAlreadyStarted();
+    error InvalidIssuanceController(address controller);
+    error UnauthorizedIssuer(address account);
 
     constructor(
         string memory name_,
@@ -275,12 +283,27 @@ contract FranchiseToken is IERC3643, ERC20, Pausable, ReentrancyGuard, AgentRole
     // Operaciones de agente
     // =====================================================================
 
+    /// @notice Fija una sola vez el contrato que puede emitir tokens nuevos.
+    /// @dev Debe configurarse antes de la primera emisión. No tiene función de cambio:
+    ///      la recuperación de un controlador fallido requiere un plan de migración.
+    function setIssuanceController(address controller) external onlyOwner {
+        if (issuanceController != address(0)) revert IssuanceControllerAlreadySet();
+        if (issuanceStarted) revert IssuanceAlreadyStarted();
+        if (controller == address(0)) revert ZeroAddress();
+        if (controller.code.length == 0) revert InvalidIssuanceController(controller);
+        issuanceController = controller;
+        emit IssuanceControllerSet(controller);
+    }
+
     function mint(address to, uint256 amount) public onlyAgent {
+        if (issuanceController != address(0) && msg.sender != issuanceController) revert UnauthorizedIssuer(msg.sender);
+        if (amount == 0) revert ZeroAmount();
         if (maxSupply != 0 && totalSupply() + amount > maxSupply) {
             revert MaxSupplyExceeded(totalSupply() + amount, maxSupply);
         }
         if (!_identityRegistry.isVerified(to)) revert RecipientNotVerified(to);
         if (!_compliance.canTransfer(address(0), to, amount)) revert ComplianceCheckFailed(address(0), to, amount);
+        issuanceStarted = true;
         _mint(to, amount);
     }
 

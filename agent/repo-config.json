@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "status": "discovered",
+  "repositoryRoot": "/home/mrtfog/projects/FranToken_Blockchain",
+  "stack": {
+    "application": "Contratos Solidity y pruebas JavaScript CommonJS; sin frontend ni backend detectados",
+    "solidityCompilerConfigured": "0.8.24",
+    "nodeObserved": "24.18.0",
+    "npmObserved": "12.2.0",
+    "hardhatInstalled": "2.29.1",
+    "hardhatToolboxInstalled": "5.0.0",
+    "openzeppelinContractsInstalled": "5.6.1"
+  },
+  "paths": {
+    "frontend": null,
+    "backend": null,
+    "contracts": "contracts/",
+    "tests": "test/"
+  },
+  "packageManager": {
+    "name": "npm",
+    "lockfile": "package-lock.json",
+    "versionObserved": "12.2.0"
+  },
+  "commands": {
+    "install": {
+      "command": "npm ci --offline --no-audit --no-fund",
+      "cwd": "/home/mrtfog/projects/FranToken_Blockchain",
+      "source": "package-lock.json; ejecutado con paquetes ya presentes en la caché local",
+      "verified": true
+    },
+    "lint": null,
+    "typecheck": null,
+    "testUnit": null,
+    "testIntegration": null,
+    "testE2E": null,
+    "testContracts": {
+      "command": "npm test",
+      "cwd": "/home/mrtfog/projects/FranToken_Blockchain",
+      "source": "package.json scripts.test: hardhat test",
+      "verified": true
+    },
+    "build": {
+      "command": "npm run compile",
+      "cwd": "/home/mrtfog/projects/FranToken_Blockchain",
+      "source": "package.json scripts.compile: hardhat compile",
+      "verified": true
+    }
+  },
+  "baseline": [
+    {
+      "command": "npm test",
+      "cwd": "/home/mrtfog/projects/FranToken",
+      "date": "2026-10-04",
+      "result": "ERROR: EROFS al crear /home/mrtfog/.config/hardhat-nodejs en el sandbox; no se ejecutaron pruebas",
+      "limitations": "Restricción del entorno, no fallo demostrado del producto"
+    },
+    {
+      "command": "npm test",
+      "cwd": "/home/mrtfog/projects/FranToken",
+      "date": "2026-10-04",
+      "result": "OK: compilados 23 archivos Solidity; 24 pruebas pasan (Hardhat local, fuera del sandbox con permiso)",
+      "limitations": "No verifica derechos económicos, proveedores, red externa, despliegue ni seguridad de producción; descargó compilador 0.8.24"
+    },
+    {
+      "command": "python3 scripts/validate_setup.py",
+      "cwd": "/home/mrtfog/projects/FranToken",
+      "date": "2026-10-04",
+      "result": "OK: 19 archivos requeridos, referencias locales y estructura; status discovered",
+      "limitations": "Solo estructura documental; no evalúa pruebas de producto ni obediencia de agentes"
+    },
+    {
+      "command": "npm test",
+      "cwd": "/home/mrtfog/projects/FranToken_Blockchain",
+      "date": "2026-10-29",
+      "result": "OK: 49 pruebas pasan, incluidos los dos acuerdos nuevos y el control de emisión",
+      "limitations": "No verifica pago externo, devolución, fórmula económica de ingresos ni seguridad de producción"
+    }
+  ],
+  "notes": [
+    "Repositorio inspeccionado: contratos ERC-20/ERC-3643 de ejemplo, registry, compliance, mock de pago, deploy y pruebas Hardhat; frontend/backend no detectados.",
+    "Sin CI, ejemplos de entorno ni archivo de versión de Node en el árbol de primer nivel; hardhat.config.js lee PRIVATE_KEY, SEPOLIA_RPC_URL y ETHERSCAN_API_KEY sin consultar sus valores.",
+    "En el bootstrap de 2026-10-04 no se ejecutó npm ci porque node_modules ya estaba disponible. No usar scripts/deploy.js, deploy:local o node como simple verificación: pueden desplegar o abrir red.",
+    "Los valores null significan no descubierto; en 2026-10-29 se ejecutaron npm ci offline, npm run compile y npm test desde FranToken_Blockchain."
+  ]
+}

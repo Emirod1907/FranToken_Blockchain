@@ -248,6 +248,8 @@ describe("FranchiseToken (ERC-3643)", function () {
       expect(await token.totalSupply()).to.equal(0);
       expect(await token.getFrozenTokens(alice.address)).to.equal(0);
       expect(await token.holderCount()).to.equal(0);
+      await expect(token.setIssuanceController(await token.getAddress()))
+        .to.be.revertedWithCustomError(token, "IssuanceAlreadyStarted");
     });
   });
 
