@@ -1,5 +1,13 @@
 # Lógica de negocio de FranToken
 
+## Alcance vigente de entrega: MVP académico aprobado
+
+El usuario confirmó el 2026-11-01 el [MVP académico](MVP-ACADEMICO.md): compra a USD 10 con pago simulado y emisión mediante C4, inicio de operación manual, distribuciones mensuales de importe cargado por administrador, prorrata al ejecutar y reclamo por inversor. Las transferencias entre inversores quedan deshabilitadas; la red base es Hardhat local y los cobros de ingresos usan un token de prueba. Esta es una definición aprobada, todavía pendiente de implementación.
+
+Para el MVP, esta especificación prevalece sobre las exigencias del modelo completo que sigue abajo: no son necesarios captación real, vehículo constituido, campañas con devolución, balances ni cascada automática C1–C3. Los requisitos jurídicos/operativos y pendientes del modelo completo se conservan para una operación real; no se declaran cumplidos ni bloquean la demostración académica. La dependencia técnica actual C4 → C3 activo se satisface con firmas de prueba. Esta actualización solo cambia documentación.
+
+## Modelo completo de referencia
+
 Actualizado: 2026-11-01. Fuente canónica del modelo declarado en este repositorio. Ver [fuentes y precedencia](source/README.md), [ciclos de vida](LIFECYCLES.md), [estado frente al modelo](IMPLEMENTATION-STATUS.md) y [decisiones](DECISIONS.md).
 
 ## Autoridad y alcance

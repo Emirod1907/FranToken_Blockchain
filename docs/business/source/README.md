@@ -1,6 +1,14 @@
 # Fuentes de la actualización de negocio
 
-Recibidas del usuario; incorporadas el 2026-11-01. Copias sin modificación de los archivos originales, con nombres portables. Los tres repositorios contienen el mismo conjunto de fuentes y las mismas especificaciones de modelo, ciclos y estado técnico. Cada copia es autónoma; al cambiar una regla compartida, reconciliar las otras dos.
+## Confirmación posterior: MVP académico
+
+El 2026-11-01 el usuario confirmó en conversación el [alcance del MVP académico](../MVP-ACADEMICO.md#fuente-autoridad-y-límites). Esa instrucción posterior prevalece para la demostración sobre los requisitos de los documentos originales: pago simulado, operación manual, ingresos mensuales de importe manual, prorrata al ejecutar, reclamo individual, sin transferencias y Hardhat local con token de pago de prueba. No se modifican los originales ni sus hashes.
+
+La actualización actual se limita a frontend y blockchain por pedido del usuario. Los tres repositorios conservan las mismas fuentes originales, pero la documentación del backend **todavía no incorpora esta decisión**. Sus requisitos previos no deben interpretarse como restricciones adicionales aprobadas para este MVP. La sincronización e implementación de backend quedan como trabajo posterior.
+
+## Material original
+
+Recibidas del usuario; incorporadas el 2026-11-01. Copias sin modificación de los archivos originales, con nombres portables. Los tres repositorios recibieron originalmente el mismo conjunto de fuentes y especificaciones. Cada copia es autónoma; las actualizaciones posteriores y su alcance se indican arriba.
 
 | Archivo | Procedencia y alcance |
 |---|---|
