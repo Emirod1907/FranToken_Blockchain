@@ -1,5 +1,24 @@
 # Decisiones y parámetros del negocio
 
+## Decisiones aprobadas exclusivamente para el MVP
+
+**Confirmación del usuario, 2026-11-01:** [MVP académico y evidencia de aprobación](MVP-ACADEMICO.md#fuente-autoridad-y-límites). MVP-01–MVP-06 están aprobadas para esta demostración: pago simulado, inicio manual de operación, períodos mensuales con importe manual, prorrata al ejecutar y reclamo individual, transferencias deshabilitadas, Hardhat local y token de pago de prueba. Implementación pendiente; el encargo actual autoriza solo documentación y ramas.
+
+| Pendiente del modelo completo | Resolución para la demostración |
+|---|---|
+| BUS-03 / D03, BUS-04 / D04 y BUS-06 / D06 | Derecho académico a ingresos variables: prorrata de tokens en circulación al ejecutar cada distribución mensual, con importe manual; no retorno fijo ni snapshot previo. |
+| BUS-05 / D05 | Campaña, meta, devolución y cierre financiero fuera del MVP. |
+| BUS-07 / D07 | El administrador marca el inicio de operación; no se requiere probar apertura física. |
+| BUS-08 / D08 | Pago de compra simulado; fondeo y reclamo de ingresos con token de prueba, sin conversión real USD/activo. |
+| BUS-09 / D09 | Transferencias entre inversores deshabilitadas; sin rescate ni liquidación automática. |
+| BUS-10 / D10 | Hardhat local, roles usuario/admin y permisos técnicos del prototipo. Una red pública o Besu no reemplazan esta elección sin decisión posterior. |
+| BUS-12 / D12 | No se confirma comisión comercial definitiva; el 0,5 % permanece como ejemplo C3. |
+| BUS-13 y BUS-14 | Ingreso distribuible cargado manualmente; operación y contabilidad reales fuera de alcance. |
+
+Los IDs BUS y D mantienen su correspondencia histórica entre repositorios. Las filas posteriores siguen abiertas **para una operación con valor real**, no para bloquear las definiciones académicas aquí aprobadas. La evidencia y los documentos fuente originales se conservan.
+
+## Registro del modelo completo y antecedentes
+
 Actualizado: 2026-11-01. Ver [modelo vigente](BUSINESS-LOGIC.md), [DTE](LIFECYCLES.md), [estado técnico](IMPLEMENTATION-STATUS.md) y [fuentes](source/README.md). «Declarado» describe el modelo aportado; no prueba contratos firmados ni habilitación operativa.
 
 ## Definiciones recibidas
