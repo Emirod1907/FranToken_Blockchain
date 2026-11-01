@@ -1,5 +1,7 @@
 # Derechos, economía y requisitos
 
+Modelo vigente: [lógica de negocio](../docs/business/BUSINESS-LOGIC.md), [DTE](../docs/business/LIFECYCLES.md), [estado técnico](../docs/business/IMPLEMENTATION-STATUS.md) y [decisiones](../docs/business/DECISIONS.md). La actualización del 2026-11-01 prevalece sobre supuestos económicos anteriores del manual; conservarlo como contexto histórico.
+
 Leer manual §§1–3 y §6 para decisiones que afecten dinero, identidad, custodia o transferencias.
 
 1. Identificar actor, actividad, jurisdicción y derecho. Si faltan, trabajar con escenarios condicionales.

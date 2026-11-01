@@ -1,12 +1,14 @@
 # FranToken — Tokenización de franquicias (ERC-3643)
 
-Prototipo de token permisionado y acuerdos asociados a una emisión para financiar una franquicia. El derecho del inversor es a ingresos, pero su fórmula, prioridad y condiciones todavía no están definidas. Los pagos al franquiciante se distinguen de las distribuciones al inversor.
+Prototipo de token permisionado y acuerdos asociados a una emisión para financiar una franquicia. El derecho del inversor es a ingresos; el modelo declara una cascada de pagos, pero su fórmula y parámetros contractuales finales siguen pendientes. Los pagos al franquiciante se distinguen de las distribuciones al inversor.
+
+Documentación vigente: [modelo de negocio](docs/business/BUSINESS-LOGIC.md), [ciclos de vida DTE](docs/business/LIFECYCLES.md), [estado técnico y brechas](docs/business/IMPLEMENTATION-STATUS.md), [decisiones](docs/business/DECISIONS.md) y [fuentes](docs/business/source/README.md).
 
 ## Modelo
 
 1. Se analiza la viabilidad de la franquicia y se crea un fideicomiso.
 2. El inversor compra tokens desde la web. Un tercero gestiona el cobro externo y su conciliación; sólo entonces se emiten los tokens.
-3. Sobre el precio ilustrativo de USD 10 por token, FranToken recibiría el 0,5 % (USD 0,05) y el fideicomiso USD 9,95. El gas se paga aparte. La liquidación monetaria ocurre fuera de estos contratos.
+3. El precio de suscripción es **fijo: USD 10 por token más fees de transacción blockchain**, informados por separado. El prototipo calcula un 0,5 % del principal (USD 0,05 y neto USD 9,95), sin cobrarlo: es un supuesto técnico, no una comisión comercial definitiva. La liquidación monetaria de la compra ocurre fuera de estos contratos.
 4. Un administrador profesional (operadora) gestiona el local.
 
 | # | Partes | Contrato | Estado |
