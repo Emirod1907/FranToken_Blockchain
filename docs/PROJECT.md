@@ -1,6 +1,6 @@
 # Contexto operativo
 
-Fuentes: manual v1.0, §§1–2, y respuestas del usuario del 2026-10-29. Resumen derivado; consultar el manual ante omisiones. Actualizado: 2026-10-29.
+Fuentes vigentes: [modelo de negocio](business/BUSINESS-LOGIC.md), [DTE](business/LIFECYCLES.md), [estado frente al modelo](business/IMPLEMENTATION-STATUS.md) y [material recibido](business/source/README.md). Actualizado: 2026-11-01. El manual y las respuestas del 29-10-2026 son antecedentes; no prevalecen sobre estas definiciones.
 
 FranToken propone financiar la puesta en marcha de franquicias mediante aportes canalizados a un fideicomiso y representar ciertos derechos con tokens. El negocio operativo debe aportar los fondos que permitan cumplir distribuciones contractuales. La plataforma no se presume fiduciaria, custodio ni emisora.
 
@@ -10,12 +10,12 @@ FranToken propone financiar la puesta en marcha de franquicias mediante aportes 
 - Web para interacción del inversor; fideicomiso como estructura propuesta.
 - Representación de un derecho a ingresos mediante tokens; fórmula, porcentaje y condiciones todavía pendientes.
 - USD 500.000 es ilustrativo. No existe acreditación de vínculo con McDonald's.
-- Dato aportado el 2026-10-29: compra desde la web, cobro externo gestionado por un tercero y emisión tras conciliación; precio propuesto de USD 10 por token más gas. FranToken recibiría 0,5 % de los USD 10 como supuesto provisional; el neto iría al fideicomiso.
+- Precio fijo indicado por el usuario: USD 10 por token más fees de transacción blockchain, separados. Compra desde la web, cobro externo y emisión mediante C4 tras conciliación. El 0,5 % calculado por C3 es un parámetro del prototipo; comisión comercial definitiva y gestión/resultado siguen pendientes.
 - El inversor recibiría ingresos. La fórmula, base, prioridad, periodicidad, pérdidas y vencimiento siguen sin definirse. El tercero gestionaría una campaña fallida conforme a términos aún pendientes.
 
 ## No confirmado
 
-Jurisdicción, instrumento, partes exactas, denominador económico, presupuesto, reglas de cierre y devolución, identidad y facultades del tercero, medio efectivo de cobro, registro prevalente, red, transferencias, fórmula de reparto, gobernanza y comisión definitiva. Ver D01–D12.
+Argentina y fideicomiso financiero son referencias declaradas en la presentación. Faltan jurisdicciones e instrumento definitivos, partes, denominadores, presupuesto, metas/plazos/procedimiento de cierre y devolución, tercero, custodia/conversión, registro, red, parámetros de transferencia, fórmula de reparto y comisión definitiva. Los DTE ya describen guardas de cierre, elegibilidad, distribución y liquidación: ver [definiciones y pendientes](business/DECISIONS.md) y D01–D12.
 
 No trasladar requisitos de Follow the Sun: hoteles, habitaciones, membresías, NFTs turísticos o compensación entre establecimientos.
 

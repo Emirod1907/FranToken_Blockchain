@@ -1,5 +1,7 @@
 # FranToken — Manual de consulta y especialidades
 
+> Actualización de dominio (2026-11-01): este manual se conserva como antecedente. Consultar primero el [modelo vigente](business/BUSINESS-LOGIC.md), los [DTE](business/LIFECYCLES.md), el [estado técnico](business/IMPLEMENTATION-STATUS.md) y las [decisiones actualizadas](business/DECISIONS.md). El precio de suscripción es fijo: USD 10 por token más fees blockchain. Los ejemplos económicos y estados propuestos de este manual no sustituyen esas definiciones.
+
 Versión 1.0 · Fecha de referencia: 2 de octubre de 2026 · Zona horaria: America/Buenos_Aires.
 
 Documento de conocimiento para un proyecto de ChatGPT. Contiene la reconstrucción de las skills Business y Técnica en formato documental, con referencias internas compartidas. No constituye una emisión, contrato de inversión, dictamen jurídico ni implementación de producción.

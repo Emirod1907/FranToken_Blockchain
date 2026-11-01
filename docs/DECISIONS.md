@@ -1,6 +1,6 @@
 # Registro de decisiones
 
-Actualizado: 2026-10-29. Estado de todos los D01–D12: PENDIENTE para operación real. Responsable de decisión y evidencia de aprobación: no designados.
+Actualizado: 2026-11-01. Estado de todos los D01–D12: PENDIENTE para operación real. Responsable de decisión y evidencia de aprobación: no designados.
 
 | ID | Pendiente | Bloquea en operación real |
 |---|---|---|
@@ -31,3 +31,9 @@ Agregar decisiones mediante ADR con problema, alternativas, evidencia, decisión
 ## Información nueva de producto, sin cierre de las Dxx
 
 El usuario indicó el 2026-10-29 que la compra se haría en la web por un precio propuesto de USD 10 por token más gas; un tercero gestionaría el cobro externo y su conciliación, tras la cual se emitiría el token. FranToken recibiría 0,5 % de los USD 10 como supuesto provisional y el neto correspondería al fideicomiso. El inversor recibiría ingresos, todavía sin fórmula económica. El tercero gestionaría la campaña fallida, pero no se definieron condiciones de cierre o devolución. Se mantiene el estado PENDIENTE de D02–D06, D08 y D12 para la operación real; el prototipo local sólo parametriza el flujo descrito. Véase ADR-0002.
+
+## Reconciliación del 2026-11-01
+
+Ver [definiciones recibidas y pendientes por Dxx](business/DECISIONS.md). El precio pasa de propuesto a **fijo: USD 10 por token + fees blockchain** por instrucción expresa del usuario. El 0,5 % de la sección histórica anterior y ADR-0002 queda como supuesto del prototipo, sin aprobación como comisión definitiva. Argentina/fideicomiso financiero son referencias declaradas de la presentación; los DTE definen estados y guardas, sin cerrar los parámetros operativos de D02–D10. Ninguna Dxx queda íntegramente resuelta para operación real.
+
+El informe del 29-10-2026 corrige la presentación: C4 ya emite una vez por compra conciliada y C3 calcula/registra comisión sin cobrar. Las diferencias con código, incluida validación KYC solo del receptor en transferencias ordinarias, constan en [estado técnico](business/IMPLEMENTATION-STATUS.md). Los estados PROPUESTA e historial de las ADR se conservan.
