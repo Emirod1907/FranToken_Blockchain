@@ -1,37 +1,20 @@
 # Estado técnico frente al modelo de negocio
 
-## Implementación del MVP académico — 2026-11-01
+## Integración MVP vigente — 2026-11-02
 
-La instrucción posterior del usuario autorizó implementar desde `develop` en ramas nuevas `feat/academic-mvp`. Las notas anteriores de «solo documentación» describen la entrega previa. El backend separado no se modifica: un gateway Next local coordina la confirmación simulada y verifica las firmas de wallet.
+Frontend y blockchain conservan `feat/academic-mvp`. Backend usa `feat/mvp-integracion-completa`, creada desde `develop` fd67b09. La instrucción más reciente autoriza implementar/documentar los tres repositorios. [Alcance vigente](MVP-ACADEMICO.md).
 
-- Blockchain: `AcademicFranchiseToken` agrega estados Draft/Published/Operating/Closed, emisión restringida a C4 vinculado, rechazo de wallet congelada/pausa, transferencias ordinarias deshabilitadas y `distributeMonthly` con unicidad por contrato/período. El cierre conserva reclamos existentes.
-- Despliegue académico: cuatro franquicias ilustrativas vinculadas al catálogo, tokens enteros a USD 10, C3 firmado con cuentas de prueba, C4 exclusivo, registro manual demo y activo de pago de prueba. El script genera un manifiesto sin claves.
-- Frontend: compra desde la ficha, términos firmados, referencia persistida antes de enviar, recuperación del resultado C4, tenencias/historial leídos de cadena, reclamo por wallet y administración de estado/distribución mensual.
-- Autorización: firma vinculada a origen local, chain ID 31337, despliegue, vencimiento y payload. La cuenta administradora se verifica en el gateway y los contratos; el acceso por email sigue siendo navegación demo, sin autoridad para emitir o distribuir.
-- Los ingresos se fondean manualmente con mUSDC y se asignan según saldos al ejecutar. No hay banco, scheduler, snapshot anterior ni fórmula de retorno fijo.
+- Registro JWT real; perfil común con DNI/CUIL/nacimiento/domicilio. El usuario puede invertir y solicitar una franquicia. Revisión manual demo sin proveedor KYC; datos privados en SQL, sin DNI/CUIL en cadena o catálogo.
+- Desafío de wallet firmado, aprobación manual en registry y SQL, aceptación C4 y compra USD 10 (1000 centavos). Emisión mediante verificador, referencia durable y recuperación de eventos; sin fallback DB-only.
+- Solicitudes sin tres años obligatorios, estado/ID del backend, revisión admin y publicación idempotente mediante AcademicProjectFactory. Se crean token+C4 y se incorpora el proyecto al catálogo dinámico sin ROI inventado.
+- Estado y balances provenientes de contratos. Reparto mensual solo Operating, importe manual mUSDC (6 decimales), período único, oferta del corte desde evento. Cobro firmado por el titular; la consulta HTTP de claim no acredita pagos.
+- Escritores antiguos `/api/mvp` y `/api/blockchain/*` retirados (410). Seed sin compras/repartos y sin reabrir proyectos; migración aditiva documentada. Un proceso Express coordina escrituras locales.
 
-Validación: 57 pruebas de contratos y ocho escenarios integrados de cliente wallet → handler Next → EVM Hardhat en memoria. Typescript, Biome del alcance, arquitectura y build Next con Webpack pasan. El entorno rechaza abrir el puerto 8545 (EPERM): no se verificó interacción visual con extensión de wallet ni transporte HTTP real. Las pruebas integradas sustituyen transporte TCP, no reglas ni ejecución de contratos. No se ejecutaron operaciones con valor real.
+Evidencia: 58 pruebas blockchain y 14 escenarios frontend → Express/JWT → Sequelize/SQL real → Hardhat en memoria. Incluyen publicación nueva con compra/reparto/cobro y migración repetida preservando filas. El runner usa Node 24 y adaptador test-only node:sqlite. No se probaron servidores MySQL/PostgreSQL ni navegador con extensión real. No se modificó tu base ni se movieron fondos reales. Los checks finales y sus límites están en la documentación de pruebas/ejecución de cada repositorio.
 
-Las tablas que siguen conservan el alcance objetivo anterior y la revisión del modelo completo. Para ejecutar la versión actual, consultar las guías enlazadas desde el README de cada repositorio.
+## Antecedentes del modelo completo
 
-## Lectura vigente para el MVP académico
-
-El usuario aprobó el [alcance académico](MVP-ACADEMICO.md) el 2026-11-01. La aprobación define comportamiento objetivo; **esta actualización no implementa funciones ni ejecuta pruebas de producto**. La revisión histórica de abajo conserva sus fechas y límites y no certifica el estado de todas las ramas actuales.
-
-| Prioridad para el MVP | Capacidad existente / brecha a resolver |
-|---|---|
-| Compra integrada con C4 | C4 dispone de aceptación y emisión idempotente por compra/pago. Falta completar el recorrido web/API con confirmación simulada, referencias persistidas y controlador exclusivo configurado. El mint administrativo directo no sustituye la compra. |
-| Franquicia y token | Vincular cada ficha publicada con su emisión, contrato, red, precio y disponibilidad; estados publicada / en operación / cerrada. |
-| Precio y gas | USD 10 por token; actualizar ejemplos incompatibles y separar gas local de prueba. La comisión C3 del 0,5 % no se convierte en tasa definitiva. |
-| Distribución mensual | Reutilizar distributeRevenue con fondeo de prueba; falta registrar franquicia/período único y comprobar inicio de operación. El administrador carga el importe distribuible, sin balance real. |
-| Cobro e historial | claimRevenue ya existe. Integrar consulta de saldo e ingresos, firma del reclamo, confirmación y referencias de compras/cobros. |
-| Duplicados y recuperación | Conservar referencias de compra y transacción, recuperar resultados inciertos y evitar volver a acreditar una distribución del mismo período. |
-| Tenencias | Consultar contratos del proyecto; los arrays/filas demo no son fuente de saldo operativo. No se exige indexador completo. |
-| Restricciones mínimas | Autenticación, usuario/admin, control de wallet y elegibilidad manual demo. Deshabilitar transfer/transferFrom on-chain y mantener emisión/reclamos; documentar alcance de pausa. |
-
-Las brechas de KYC bilateral, recuperación y obligaciones C2 descritas en la revisión general se conservan como hallazgos, sin convertir la corrección integral de subsistemas fuera de uso en condición de entrega del MVP. El recorrido académico debe usar sus controles mínimos de forma coherente. No basta ocultar en la UI funciones que deban estar bloqueadas on-chain.
-
-Fuera de alcance: bancos, conciliación real, campaña/devoluciones, liquidación, reservas e impuestos, cascada C1–C3, reemplazo de operadora y mercado secundario. La revisión extensa siguiente pertenece al modelo completo, no al checklist de aceptación del MVP.
+La revisión siguiente es histórica; sus descripciones de mint directo, coordinator ausente, datos demo y cantidades de tests no describen el recorrido MVP vigente. Se conserva para rastrear los pendientes jurídicos/operativos de una versión real.
 
 ## Revisión histórica frente al modelo completo
 

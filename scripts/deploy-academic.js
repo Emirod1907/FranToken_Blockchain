@@ -14,6 +14,7 @@ async function deployAcademic({ writeManifest = true } = {}) {
   const services = await ethers.deployContract('PlatformServicesAgreement', [trust.address, platform.address, '0x555344', 2, 50, ethers.id('DEMO: C3 académico, 0.5% ilustrativo')]);
   await services.connect(trust).sign();
   await services.connect(platform).sign();
+  const factory = await ethers.deployContract("AcademicProjectFactory", [admin.address, await registry.getAddress(), await payment.getAddress(), await services.getAddress(), verifier.address]);
   const projects = [];
   const examples = [['mcdonalds', "McDonald's · unidad académica", 'MCD'], ['burger-king', 'Burger King · unidad académica', 'BK'], ['havanna', 'Havanna · unidad académica', 'HAV'], ['pizza-hut', 'Pizza Hut · unidad académica', 'PIZZA']];
   for (const [id, name, symbol] of examples) {
@@ -32,7 +33,7 @@ async function deployAcademic({ writeManifest = true } = {}) {
     await registry.registerIdentity(investor.address, investor.address, 32);
   }
   await payment.mint(admin.address, ethers.parseUnits('1000000', 6));
-  const manifest = { version: 1, deploymentId: randomUUID(), chainId: 31337, fromBlock: 0, admin: admin.address, verifier: verifier.address, registry: await registry.getAddress(), paymentToken: await payment.getAddress(), projects };
+  const manifest = { version: 1, deploymentId: randomUUID(), chainId: 31337, fromBlock: 0, admin: admin.address, verifier: verifier.address, factory: await factory.getAddress(), registry: await registry.getAddress(), paymentToken: await payment.getAddress(), projects };
   if (writeManifest) {
     const target = path.join(__dirname, '../deployments/academic-local.json');
     await mkdir(path.dirname(target), { recursive: true });

@@ -47,3 +47,15 @@ El usuario indicó el 2026-10-29 que la compra se haría en la web por un precio
 Ver [definiciones recibidas y pendientes por Dxx](business/DECISIONS.md). El precio pasa de propuesto a **fijo: USD 10 por token + fees blockchain** por instrucción expresa del usuario. El 0,5 % de la sección histórica anterior y ADR-0002 queda como supuesto del prototipo, sin aprobación como comisión definitiva. Argentina/fideicomiso financiero son referencias declaradas de la presentación; los DTE definen estados y guardas, sin cerrar los parámetros operativos de D02–D10. Ninguna Dxx queda íntegramente resuelta para operación real.
 
 El informe del 29-10-2026 corrige la presentación: C4 ya emite una vez por compra conciliada y C3 calcula/registra comisión sin cobrar. Las diferencias con código, incluida validación KYC solo del receptor en transferencias ordinarias, constan en [estado técnico](business/IMPLEMENTATION-STATUS.md). Los estados PROPUESTA e historial de las ADR se conservan.
+
+## MVP-2026-11-02 — Integración única Express y publicación de solicitudes
+
+Estado: implementado dentro del alcance académico solicitado. Instrucción vigente del usuario: realizar los cambios necesarios en las ramas actuales; backend en rama nueva desde develop. Complementa el alcance aprobado y sustituye la decisión técnica anterior del gateway Next para esta demo.
+
+Express autentica JWT, comprueba perfil/aprobación y vincula wallets por desafío firmado. Admin y verificador usan firmantes distintos del manifiesto. La misma cuenta puede invertir y solicitar franquicias; no se agrega un rol excluyente. Perfil en SQL, sin documentación personal en cadena.
+
+La publicación necesita token+C4 para que una solicitud aprobada pueda comprarse y cobrar. Se elige una fábrica local con clave de proyecto idempotente y deployers separados por tamaño de bytecode. Se conserva C3 firmado de prueba. No se agrega cálculo de campañas, caja, ROI ni estructura jurídica real. Precio 1000 centavos USD; ingresos mUSDC seis decimales.
+
+La migración es aditiva; el seed no genera compras/repartos. Los endpoints alternativos de escritura quedan 410. Reintentos se concilian con eventos y claves únicas; no hay fallback que confirme derechos solo en base de datos. La cola del MVP presupone un proceso escritor. Reiniciar Hardhat exige una base de prueba nueva para una nueva presentación, sin borrado automático.
+
+Evidencia: 58 tests de contratos y 14 escenarios integrados con SQL y EVM reales en memoria. Límites: sin prueba visual/TCP ni ejecución contra servidor MySQL/PostgreSQL; no se prueba uso con valor real. [Flujo vigente](business/MVP-ACADEMICO.md).

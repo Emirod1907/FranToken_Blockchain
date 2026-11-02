@@ -2,15 +2,15 @@
 
 ## Ejecutar el MVP académico implementado
 
-En una terminal: `npm run node`. En otra: `npm run deploy:academic`. Hardhat local usa chain ID 31337. El script nuevo despliega el token académico sin alterar el script de demostración general: cuatro proyectos publicados de prueba, C3 firmado, C4 exclusivo, registro de identidades demo y mUSDC para fondear ingresos. Escribe `deployments/academic-local.json` sin claves, ignorado por Git.
+En una terminal: `npm run node`. En otra: `npm run deploy:academic`. Hardhat local usa chain ID 31337. El script nuevo despliega el token académico sin alterar el script de demostración general: cuatro proyectos publicados de prueba, C3 firmado, C4 exclusivo, registro de identidades demo, mUSDC para fondear ingresos y fábrica de proyectos. Escribe `deployments/academic-local.json` sin claves, ignorado por Git.
 
 Cada proyecto dispone de 1.000 tokens enteros como dato ficticio, a USD 10 de referencia; la cuenta local 0 administra, la 3 verifica compras simuladas y las demás pueden actuar como inversores. La preparación no inicia la operación: el administrador debe hacerlo desde la web antes de distribuir. `npm test` verifica la suite general y los casos del MVP.
 
-Consultar [guía blockchain](docs/ACADEMIC-MVP.md). Las descripciones anteriores de implementación pendiente son antecedentes; la instrucción posterior del usuario autorizó esta implementación desde `develop` en `feat/academic-mvp`, sin dinero real.
+La API Express lee el manifiesto y coordina la emisión/revisión; el frontend no usa claves administrativas. Consultar [guía blockchain](docs/ACADEMIC-MVP.md). Las descripciones anteriores de implementación pendiente son antecedentes; la instrucción posterior del usuario autorizó esta implementación desde `develop` en `feat/academic-mvp`, sin dinero real.
 
 ## Alcance vigente: MVP académico
 
-El usuario confirmó el [MVP académico](docs/business/MVP-ACADEMICO.md): compra a USD 10 con pago simulado y emisión C4; inicio de operación manual; distribuciones mensuales de importe manual, a prorrata al ejecutar; reclamo por inversor; transferencias deshabilitadas; Hardhat local y token de pago de prueba. Gas separado e identificado como de prueba. **Especificación aprobada, implementación pendiente.** Esta actualización modifica solo documentación.
+El usuario confirmó el [MVP académico](docs/business/MVP-ACADEMICO.md): compra a USD 10 con pago simulado y emisión C4; inicio de operación manual; distribuciones mensuales de importe manual, a prorrata al ejecutar; reclamo por inversor; transferencias deshabilitadas; Hardhat local y token de pago de prueba. Gas separado e identificado como de prueba. **Implementado e integrado con Express y frontend.** La fábrica académica publica token+C4 para solicitudes aprobadas, sin metas de campaña ni lógica financiera avanzada.
 
 El modelo completo y los antecedentes técnicos siguientes se conservan como referencia; campaña, bancos, liquidación y cascada contable completa no son condiciones de entrega del MVP.
 

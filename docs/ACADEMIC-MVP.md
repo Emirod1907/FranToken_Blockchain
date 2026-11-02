@@ -1,36 +1,38 @@
-# Blockchain del MVP académico
+# Blockchain del MVP integrado
 
-El nuevo `AcademicFranchiseToken` extiende `FranchiseToken` sin modificar el comportamiento del token general: solo se hicieron virtuales sus puntos de extensión. Conserva C4, aceptación, precio exacto, unicidad de compra y correcciones de ingresos ya asignados.
+Actualizado: 2026-11-02. [Negocio vigente](business/MVP-ACADEMICO.md), [estado técnico](business/IMPLEMENTATION-STATUS.md), [decisión de integración](adr/0005-integracion-express-publicacion.md).
 
-## Preparar la presentación
+## Ejecución
 
-1. Instalar dependencias con el lockfile npm del repositorio y ejecutar `npm test`.
-2. Ejecutar `npm run node` en una terminal y `npm run deploy:academic` en otra.
-3. Usar el manifiesto `deployments/academic-local.json` desde el frontend hermano. Solo contiene direcciones, red, deploymentId y datos públicos del proyecto. Reiniciar Hardhat exige redesplegar y actualizar el frontend.
-4. En el frontend habilitar `MVP_ENABLED=true`, RPC `http://127.0.0.1:8545` y, opcionalmente, `MVP_MANIFEST_PATH` apuntando al manifiesto. La guía completa de UI está en el documento ACADEMIC-MVP-RUNBOOK.md, en la carpeta de arquitectura del frontend.
+`npm run node` y `npm run deploy:academic` en terminales separadas. Solo Hardhat local, chain ID 31337. El manifiesto `deployments/academic-local.json`, ignorado por Git, contiene deploymentId, bloque inicial, registry, paymentToken, factory, admin/verificador y token/C4 de cuatro proyectos. **Express lo lee**; Next consume Express con JWT. No se configuran MVP_ENABLED/MVP_RPC_URL en frontend.
 
-Solo admite Hardhat/localhost y chain ID 31337. Las cuentas 0, 1, 2 y 3 se usan como administrador, vehículo, plataforma y verificador de pago simulado; las restantes como inversores. Usar únicamente las cuentas públicas de prueba del nodo, nunca fondos o claves reales. Las cuatro marcas son referencias ilustrativas, sin alianza ni unidad real acreditada. Cada proyecto usa 1.000 tokens enteros como fixture de presentación; el principal simulado es USD 10 por token.
+Cuentas locales de prueba: 0 administra/fondea; 1 vehículo C3; 2 plataforma C3; 3 verificador; 4+ usuarios. mUSDC tiene seis decimales y el admin recibe fondos ficticios para repartir. Fixtures: 1000 tokens enteros por proyecto, precio **1000 centavos USD**, no 10000000 unidades mUSDC. C3 está firmado con datos ficticios; 0,5 % es ejemplo, sin cobro real. Las cuentas de prueba preinscritas en registry no sustituyen la revisión de perfil de Express.
 
-## Guardas y decisiones
+Preparación restante: en backend ejecutar migración/importación del MVP y habilitar los flags de escritura local; frontend apunta `NEXT_PUBLIC_API_URL` a Express. La guía completa está en `docs/architecture/ACADEMIC-MVP-RUNBOOK.md` del frontend y `docs/MVP-INTEGRATION.md` del backend hermano. Reiniciar cadena exige redesplegar y usar otra base de prueba; importar un manifiesto no migra derechos ni borra compras anteriores.
 
-| Acción | Control |
+## Contratos y guardas
+
+`AcademicFranchiseToken` extiende el token general conservando sus correcciones de ingresos y facultades administrativas. El token general/C1/C2 quedan disponibles para estudiar el modelo completo; no se usan como atajo para la compra académica.
+
+| Acción | Regla |
 |---|---|
-| Publicar | Solo owner; Draft → Published. |
-| Iniciar operación | Solo owner; Published → Operating. |
-| Comprar/emitir | Published u Operating, C4 exclusivo configurado, aceptación, habilitación demo, límites, precio exacto y referencias de compra/pago únicas; token no pausado y receptor no congelado. |
-| Transferir | transfer, transferFrom y batchTransfer ordinarios no mueven tokens en el MVP. Las facultades administrativas heredadas no se exponen como mecanismo de reventa. |
-| Distribuir | Solo agente, Operating, token no pausado, mes YYYYMM válido y no usado; cantidad positiva, titulares y fondeo real en token de prueba. La entrada genérica distributeRevenue revierte para impedir eludir el período. |
-| Cobrar | El titular llama claimRevenue; conserva los controles de pausa/congelamiento y el registro de lo ya cobrado. Puede retirar lo acumulado de varios meses. |
-| Cerrar | Solo owner desde Published/Operating; no se reabre, no se emite ni reparte más, pero se conservan ingresos reclamables. No implica liquidación económica ni devolución. |
+| Publicar / operar / cerrar | Owner, transiciones hacia adelante. Cerrada no reabre y mantiene ingresos anteriores. |
+| Emitir | Published/Operating; C4 controlador y agente; términos, elegibilidad, precio y referencias exactos; sin pausa/congelamiento. |
+| Transferir | transfer/transferFrom/batchTransfer ordinarios revertidos, sin bloquear mint/cobro. Recuperación/forcedTransfer heredadas no se exponen como mercado secundario. |
+| Distribuir | Agente, Operating, fondeo positivo, titulares, período YYYYMM válido/no usado. distributeRevenue genérico revierte. |
+| Cobrar | Titular firma claimRevenue; no paga automáticamente el backend. Pausa/congelamiento vigentes impiden cobro; cierre no. |
 
-`distributedPeriod` se marca en la misma transacción que fondea/asigna. Si falla el fondeo o el importe es inválido, la EVM revierte también esa marca. La prorrata usa el supply al ejecutar; `MonthlyRevenueDistributed` registra período, monto y oferta del corte. Las correcciones heredadas evitan que una emisión posterior reciba distribuciones previas. El redondeo puede dejar residuos inferiores a unidades mínimas de cobro; no se altera la suma mediante floats.
+`MonthlyRevenueDistributed` registra mes, importe y supply del corte. Marca del mes y fondeo/asignación revierten juntos si falla la transacción. Correcciones evitan ingresos retroactivos al comprar después; redondeo entero puede dejar residuos.
 
-C3 se firma con cuentas de prueba para satisfacer la dependencia de C4, con 0,5 % como ejemplo histórico; no se aprueba una comisión comercial definitiva. El despliegue académico no registra C1/C2 como obligaciones senior: su contabilidad y pagos reales están fuera de este recorrido. El despliegue general existente sigue disponible para estudiar esas relaciones.
+## Publicación de solicitudes
 
-## Verificación y límites
+`AcademicProjectFactory.createProject(key,name,symbol,cap,compliance)` solo owner. La clave estable deriva del ID de proyecto reservado por Express, sin DNI/CUIL. Crea token académico y C4, asigna C4 como agente/controlador, admin como agente/owner y publica. Usa el registry, pago, C3 firmado y verificador configurados en su despliegue. La misma clave/configuración recupera direcciones; otra configuración se rechaza. C3 debe ser USD con dos decimales; precio 1000.
 
-- `npm test`: **57 pruebas pasan**, incluidas seis del MVP y la suite anterior.
-- Desde el frontend hermano: `node scripts/test-academic-integration.cjs` verifica ocho escenarios de cliente wallet → API Next → contratos reales en Hardhat en memoria. Incluye respuesta de compra perdida, rechazo de permisos y no duplicación de mes/cobro.
-- El despliegue académico se ejecutó dentro de esa prueba integrada; no se abrieron nodos ni se movieron fondos reales.
-- La verificación TCP/navegador quedó pendiente porque el sandbox rechaza escuchar en 127.0.0.1:8545 con EPERM. No se afirma prueba visual ni integración por extensión real.
-- Las ramas partieron del develop local; no se pudo actualizar GitHub por DNS. Las decisiones jurídicas y de operación con valor real siguen pendientes.
+Deployers auxiliares separados crean token/C4 para mantener cada runtime dentro del límite EIP-170. No añaden permisos web ni intervención del usuario en despliegues. Express crea compliance usando el artefacto público compilado y reserva el proyecto antes de llamar a la fábrica; si una respuesta se pierde consulta el mapping de la misma clave. No hace una llamada nueva con una clave aleatoria.
+
+## Evidencia y límites
+
+- `npm test`: **58 pasan**, suite general, seis escenarios del token académico y uno de fábrica (roles, configuración, controladores y reintento).
+- Backend `npm run test:mvp` / frontend `node scripts/test-academic-integration.cjs`: **14 escenarios pasan**, clientes frontend → rutas/middlewares Express/JWT → Sequelize/SQL real → Hardhat. Incluyen nueva solicitud/publicación/compra/reparto/cobro y reintentos.
+- El runner solo sustituye sockets y driver sqlite3 por node:sqlite; firmas, SQL y EVM son reales. No requiere abrir puertos ni toca una cadena/base existentes. Requiere Node 24.
+- Sin prueba visual de extensión, transporte TCP ni servidor MySQL/PostgreSQL; el sandbox restringe sockets. Sin fondos reales. La suite no certifica cumplimiento jurídico o producción.
