@@ -65,3 +65,13 @@ Evidencia: 58 tests de contratos y 14 escenarios integrados con SQL y EVM reales
 Ante los errores de disponibilidad informados por el usuario, se verificó que faltaban nodo y manifiesto. Se inició `npm run node -- --hostname 127.0.0.1` y se ejecutó `npm run deploy:academic`, generando el manifiesto ignorado de `deployments/academic-local.json`. El backend importó los cuatro proyectos después de comprobar que SQL no tenía compras ni proyectos con contratos vinculados. Se verificó por HTTP la consulta de inversión: 200, chain ID 31337 y cuatro proyectos.
 
 No se cambiaron contratos ni se hicieron compras con cuentas del usuario. El nodo debe permanecer activo; la advertencia existente sobre pérdida de cadena al reiniciar Hardhat sigue vigente. La prueba de conexión mediante extensión real queda pendiente.
+
+## MVP-2026-11-03 — Gestión del creador y acceso interno de superadmin
+
+Estado: implementado por autorización del usuario de proceder con el plan, partiendo de `develop` en ramas `feat/franchise-management`. El creador administra su propia solicitud y franquicia; el superadmin tiene acceso global. Observar, aprobar y publicar emisiones, habilitar perfiles y ejecutar repartos exige superadmin. El rol `admin` anterior se conserva sin permisos internos y no se promueve automáticamente.
+
+La corrección previa a publicar vuelve la solicitud a `Enviada` e invalida aprobaciones. Versiones y bloqueos SQL rechazan revisiones obsoletas. La reserva de publicación congela los datos, aun si falla la cadena. El creador inicia operación/cierra su franquicia y propone importes mensuales; el superadmin observa o ejecuta exclusivamente el contenido almacenado. Un reintento concilia la ejecución sin duplicarla. El cierre es definitivo y conserva ingresos ya asignados.
+
+El alta interna es un comando explícito con correo y contraseña configurados fuera del código; no modifica cuentas ocupadas ni restablece contraseñas. Se incorpora auditoría privada y migración aditiva. No cambian contratos Solidity, precio, C3/C4, derechos económicos ni la exclusión de reventa. La autorización web se valida en Express con el usuario vigente de SQL, separada de los firmantes técnicos blockchain.
+
+Evidencia: 31 escenarios integrados (clientes frontend, Express/JWT, SQLite y Hardhat), builds/tipos y navegador escritorio/móvil. Migración local en MariaDB con recuentos preservados y acceso real por HTTP. PostgreSQL y extensión real de wallet siguen sin probarse en esta entrega. Ver el alcance vigente en [MVP académico](business/MVP-ACADEMICO.md).
