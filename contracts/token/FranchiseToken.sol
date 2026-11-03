@@ -255,7 +255,7 @@ contract FranchiseToken is IERC3643, ERC20, Pausable, ReentrancyGuard, AgentRole
     // Transferencias de inversores
     // =====================================================================
 
-    function transfer(address to, uint256 amount) public override(IERC20, ERC20) whenNotPaused returns (bool) {
+    function transfer(address to, uint256 amount) public virtual override(IERC20, ERC20) whenNotPaused returns (bool) {
         _checkTransfer(msg.sender, to, amount);
         _transfer(msg.sender, to, amount);
         return true;
@@ -265,7 +265,7 @@ contract FranchiseToken is IERC3643, ERC20, Pausable, ReentrancyGuard, AgentRole
         address from,
         address to,
         uint256 amount
-    ) public override(IERC20, ERC20) whenNotPaused returns (bool) {
+    ) public virtual override(IERC20, ERC20) whenNotPaused returns (bool) {
         _checkTransfer(from, to, amount);
         _spendAllowance(from, msg.sender, amount);
         _transfer(from, to, amount);
@@ -295,7 +295,7 @@ contract FranchiseToken is IERC3643, ERC20, Pausable, ReentrancyGuard, AgentRole
         emit IssuanceControllerSet(controller);
     }
 
-    function mint(address to, uint256 amount) public onlyAgent {
+    function mint(address to, uint256 amount) public virtual onlyAgent {
         if (issuanceController != address(0) && msg.sender != issuanceController) revert UnauthorizedIssuer(msg.sender);
         if (amount == 0) revert ZeroAmount();
         if (maxSupply != 0 && totalSupply() + amount > maxSupply) {
@@ -451,7 +451,7 @@ contract FranchiseToken is IERC3643, ERC20, Pausable, ReentrancyGuard, AgentRole
      * @dev El agente debe haber hecho `approve` del token de pago a este contrato.
      *      Revierte si alguna obligación senior tiene pagos vencidos.
      */
-    function distributeRevenue(uint256 amount, string calldata memo) external onlyAgent nonReentrant {
+    function distributeRevenue(uint256 amount, string memory memo) public virtual onlyAgent nonReentrant {
         if (amount == 0) revert ZeroAmount();
         uint256 supply = totalSupply();
         if (supply == 0) revert NoHolders();

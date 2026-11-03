@@ -1,5 +1,9 @@
 # Decisiones y parámetros del negocio
 
+## Implementación autorizada desde develop
+
+El 2026-11-01 el usuario pidió implementar frontend y blockchain desde `develop` en ramas nuevas. Se crearon ramas `feat/academic-mvp` y se incorporaron las definiciones documentales aprobadas como prerrequisito. Esta autorización posterior sustituye la limitación anterior de «solo documentación» para el MVP; no modifica las condiciones de una operación real. La integración local usa rutas de servidor Next sin alterar el repositorio backend separado.
+
 ## Decisiones aprobadas exclusivamente para el MVP
 
 **Confirmación del usuario, 2026-11-01:** [MVP académico y evidencia de aprobación](MVP-ACADEMICO.md#fuente-autoridad-y-límites). MVP-01–MVP-06 están aprobadas para esta demostración: pago simulado, inicio manual de operación, períodos mensuales con importe manual, prorrata al ejecutar y reclamo individual, transferencias deshabilitadas, Hardhat local y token de pago de prueba. Implementación pendiente; el encargo actual autoriza solo documentación y ramas.
@@ -53,3 +57,15 @@ Los IDs `BUS-*` siguen el registro del frontend. Los D01–D12 de blockchain se 
 | BUS-14 | Operadora administra y FranToken monitorea; C2 contiene reportes/KPIs. | Indicadores concretos, verificación, auditoría, intervención, sustitución y desvíos de presupuesto. |
 
 Ninguna fila queda completamente cerrada para operar con valor real. Registrar decisión, responsable, fecha, términos y evidencia antes de habilitar la operación afectada; conservar el historial de decisiones sustituidas.
+
+## MVP-2026-11-02 — Integración única Express y publicación de solicitudes
+
+Estado: implementado dentro del alcance académico solicitado. Instrucción vigente del usuario: realizar los cambios necesarios en las ramas actuales; backend en rama nueva desde develop. Complementa el alcance aprobado y sustituye la decisión técnica anterior del gateway Next para esta demo.
+
+Express autentica JWT, comprueba perfil/aprobación y vincula wallets por desafío firmado. Admin y verificador usan firmantes distintos del manifiesto. La misma cuenta puede invertir y solicitar franquicias; no se agrega un rol excluyente. Perfil en SQL, sin documentación personal en cadena.
+
+La publicación necesita token+C4 para que una solicitud aprobada pueda comprarse y cobrar. Se elige una fábrica local con clave de proyecto idempotente y deployers separados por tamaño de bytecode. Se conserva C3 firmado de prueba. No se agrega cálculo de campañas, caja, ROI ni estructura jurídica real. Precio 1000 centavos USD; ingresos mUSDC seis decimales.
+
+La migración es aditiva; el seed no genera compras/repartos. Los endpoints alternativos de escritura quedan 410. Reintentos se concilian con eventos y claves únicas; no hay fallback que confirme derechos solo en base de datos. La cola del MVP presupone un proceso escritor. Reiniciar Hardhat exige una base de prueba nueva para una nueva presentación, sin borrado automático.
+
+Evidencia: 58 tests de contratos y 14 escenarios integrados con SQL y EVM reales en memoria. Límites: sin prueba visual/TCP ni ejecución contra servidor MySQL/PostgreSQL; no se prueba uso con valor real. [Flujo vigente](MVP-ACADEMICO.md).
