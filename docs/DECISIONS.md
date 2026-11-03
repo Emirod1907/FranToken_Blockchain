@@ -59,3 +59,9 @@ La publicación necesita token+C4 para que una solicitud aprobada pueda comprars
 La migración es aditiva; el seed no genera compras/repartos. Los endpoints alternativos de escritura quedan 410. Reintentos se concilian con eventos y claves únicas; no hay fallback que confirme derechos solo en base de datos. La cola del MVP presupone un proceso escritor. Reiniciar Hardhat exige una base de prueba nueva para una nueva presentación, sin borrado automático.
 
 Evidencia: 58 tests de contratos y 14 escenarios integrados con SQL y EVM reales en memoria. Límites: sin prueba visual/TCP ni ejecución contra servidor MySQL/PostgreSQL; no se prueba uso con valor real. [Flujo vigente](business/MVP-ACADEMICO.md).
+
+## MVP-2026-11-03 — Puesta en marcha local para el frontend
+
+Ante los errores de disponibilidad informados por el usuario, se verificó que faltaban nodo y manifiesto. Se inició `npm run node -- --hostname 127.0.0.1` y se ejecutó `npm run deploy:academic`, generando el manifiesto ignorado de `deployments/academic-local.json`. El backend importó los cuatro proyectos después de comprobar que SQL no tenía compras ni proyectos con contratos vinculados. Se verificó por HTTP la consulta de inversión: 200, chain ID 31337 y cuatro proyectos.
+
+No se cambiaron contratos ni se hicieron compras con cuentas del usuario. El nodo debe permanecer activo; la advertencia existente sobre pérdida de cadena al reiniciar Hardhat sigue vigente. La prueba de conexión mediante extensión real queda pendiente.
